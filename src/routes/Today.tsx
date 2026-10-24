@@ -9,6 +9,8 @@ import { go } from '../lib/router';
 import { db } from '../storage/db';
 import { Button, Icon, Illustration, MoodPicker, Sheet, TabBar } from '../components/ui';
 import { DateStrip, DomainCard, DomainSheet } from '../components/domain';
+import { Avatar, ProfileSheet } from '../components/profiles';
+import { useProfiles } from '../lib/profile';
 
 function greetingKey(h: number) {
   if (h >= 5 && h < 12) return 'today.greeting.morning';
@@ -29,6 +31,8 @@ export function Today({ date: dateParam }: { date?: DateKey }) {
   const [saved, setSaved] = useState(false);
   const [strip, setStrip] = useState<{ date: DateKey; mood?: number }[]>([]);
   const [gap, setGap] = useState(false);
+  const [profilesOpen, setProfilesOpen] = useState(false);
+  const { active: profile } = useProfiles();
 
   useEffect(() => {
     const keys = Array.from({ length: 7 }, (_, i) => addDays(today, i - 6));
@@ -62,7 +66,13 @@ export function Today({ date: dateParam }: { date?: DateKey }) {
     <>
       <main class="screen screen--today">
         <header class="screen__head">
-          <div class="screen__sub">{dateLine}</div>
+          <div class="screen__row" style="align-items:center;margin-bottom:-8px">
+            <div class="screen__sub">{dateLine}</div>
+            <button type="button" class="sf-avatarbtn sf-press" style="margin:-10px -6px -10px 0"
+              aria-label={`${t('profiles.switch')}. ${t('profiles.current', { name: profile.name })}`} onClick={() => setProfilesOpen(true)}>
+              <Avatar profile={profile} size={36} />
+            </button>
+          </div>
           <h1 class="sf-title">{isToday ? t(greetingKey(new Date().getHours())) : t('today.past', { date: new Intl.DateTimeFormat(locale(lang), { day: 'numeric', month: 'long' }).format(dt) })}</h1>
         </header>
 
@@ -110,6 +120,7 @@ export function Today({ date: dateParam }: { date?: DateKey }) {
           onChange={(e) => setDomain(openDomain.id, e)} onClose={() => setOpen(null)}
         />
       )}
+      {profilesOpen && <ProfileSheet onClose={() => setProfilesOpen(false)} />}
       {saved && (
         <Sheet onClose={() => setSaved(false)} labelledBy="saved-title">
           <div class="sf-saved" role="status">

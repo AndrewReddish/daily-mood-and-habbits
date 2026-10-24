@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { SpheresDB, putEntry, getConfig, putConfig } from '../../src/storage/db';
-import { pullAll, pushDirty } from '../../src/storage/sync-github';
+import { pullAll, pushDirty, syncProfilesFile } from '../../src/storage/sync-github';
+import { DEFAULT_PROFILE, mergeProfiles, type Profile } from '../../src/storage/profiles';
 import { defaultConfig } from '../../src/model/defaults';
 import { entry } from './fixtures';
 
@@ -101,5 +102,42 @@ describe('GitHub sync', () => {
     await putConfig(edited, {}, db);
     await pushDirty(target, db, gh.fetchImpl);
     expect(gh.read('config.json').domains[1].active).toBe(false);
+  });
+
+  it('each user syncs into their own folder; users never see each other’s entries', async () => {
+    const me = freshDb();
+    const olena = freshDb();
+    await putEntry(entry('2026-10-24', '2026-10-24T21:00:00+03:00', { mood: 5 }), me);
+    await putEntry(entry('2026-10-24', '2026-10-24T21:05:00+03:00', { mood: 2 }), olena);
+    await pushDirty(target, me, gh.fetchImpl);
+    await pushDirty({ ...target, prefix: 'users/olena-1/' }, olena, gh.fetchImpl);
+    expect(gh.paths()).toEqual(['entries/2026-10.json', 'users/olena-1/entries/2026-10.json']);
+
+    const olenaReinstalled = freshDb();
+    await pullAll({ ...target, prefix: 'users/olena-1/' }, olenaReinstalled, gh.fetchImpl);
+    expect((await olenaReinstalled.entries.get('2026-10-24'))?.mood).toBe(2);
+
+    const meReinstalled = freshDb();
+    await pullAll(target, meReinstalled, gh.fetchImpl);
+    expect((await meReinstalled.entries.get('2026-10-24'))?.mood).toBe(5);
+    expect(await meReinstalled.entries.count()).toBe(1);
+  });
+
+  it('profiles.json carries the list of users across installs', async () => {
+    const olena: Profile = { id: 'olena-1', name: 'Олена', color: 'nature', createdAt: '2026-10-24T10:00:00Z', updatedAt: '2026-10-24T10:00:00Z' };
+    await syncProfilesFile(target, [DEFAULT_PROFILE, olena], gh.fetchImpl);
+    const fresh = await syncProfilesFile(target, [DEFAULT_PROFILE], gh.fetchImpl);
+    expect(fresh.map((p) => p.name).sort()).toEqual(['Андрій', 'Олена']);
+  });
+});
+
+describe('mergeProfiles', () => {
+  it('newer rename wins, new users are added', () => {
+    const a = { ...DEFAULT_PROFILE, name: 'Андрій', updatedAt: '2026-10-01T00:00:00Z' };
+    const b = { ...DEFAULT_PROFILE, name: 'Andrew', updatedAt: '2026-10-02T00:00:00Z' };
+    const c: Profile = { id: 'x-1', name: 'X', color: 'work', createdAt: 'z', updatedAt: '2026-10-01T00:00:00Z' };
+    const m = mergeProfiles([a], [b, c]);
+    expect(m.find((p) => p.id === 'me')?.name).toBe('Andrew');
+    expect(m).toHaveLength(2);
   });
 });

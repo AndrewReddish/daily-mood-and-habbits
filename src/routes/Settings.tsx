@@ -11,6 +11,9 @@ import { GitHubClient } from '../storage/sync-github';
 import { pickNewer } from '../storage/merge';
 import { Button, Icon, IconButton, Segmented, Sheet, TabBar, TextField, Toggle } from '../components/ui';
 import { DomainChip, domainLabel } from '../components/domain';
+import { AddProfileForm, ProfileList } from '../components/profiles';
+import { useProfiles } from '../lib/profile';
+import { syncPrefixFor } from '../storage/profiles';
 
 type Theme = LocalSettings['theme'];
 
@@ -24,6 +27,7 @@ export function Settings({ theme, setTheme, setLang, toast }: {
   const [settings, setSettings] = useState<LocalSettings | null>(null);
   const [sheet, setSheet] = useState<'token' | 'domains' | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const { active, switchTo, rename } = useProfiles();
 
   useEffect(() => onSyncStatus(setStatus), []);
   useEffect(() => void getSettings().then(setSettings), [status, sheet]);
@@ -70,6 +74,15 @@ export function Settings({ theme, setTheme, setLang, toast }: {
     <>
       <main class="screen" style="gap:8px">
         <h1 class="sf-title" style="padding-top:10px">{t('tab.settings')}</h1>
+
+        <h2 class="sf-section">{t('profiles.section')}</h2>
+        <ProfileList picked={active.id} onPick={switchTo} />
+        <AddProfileForm />
+        <div class="sf-field" style="padding-top:4px">
+          <label class="sf-meta" for="profile-name" style="padding:0 4px">{t('profiles.rename')} · {active.name}</label>
+          <input id="profile-name" class="sf-input sf-input--ui" style="background:var(--surface)" defaultValue={active.name} maxLength={40}
+            onChange={(e) => void rename(active.id, (e.currentTarget as HTMLInputElement).value)} />
+        </div>
 
         <h2 class="sf-section">{t('settings.domains')}</h2>
         <div class="sf-list">
@@ -136,6 +149,7 @@ export function Settings({ theme, setTheme, setLang, toast }: {
 
 function TokenSheet({ settings, onClose }: { settings: LocalSettings; onClose: () => void }) {
   const t = useT();
+  const { active } = useProfiles();
   const [repo, setRepo] = useState(settings.repo ?? '');
   const [token, setToken] = useState('');
   const [busy, setBusy] = useState(false);
@@ -145,7 +159,7 @@ function TokenSheet({ settings, onClose }: { settings: LocalSettings; onClose: (
   const connect = async () => {
     setBusy(true);
     setErr('');
-    const target = { repo: repo.trim(), token: token.trim() || settings.token || '' };
+    const target = { repo: repo.trim(), token: token.trim() || settings.token || '', prefix: syncPrefixFor(active.id) };
     try {
       await new GitHubClient(target).ping();
       await patchSettings(target);
@@ -173,6 +187,7 @@ function TokenSheet({ settings, onClose }: { settings: LocalSettings; onClose: (
       <TextField id="repo" ui label={t('settings.repo')} placeholder={t('settings.repo.placeholder')} value={repo} onInput={setRepo} />
       <TextField id="token" ui label={t('settings.token')} placeholder={connected ? `•••• ${settings.token!.slice(-4)}` : t('settings.token.placeholder')} value={token} onInput={setToken} />
       <p class="sf-meta">{t('settings.token.hint')}</p>
+      <p class="sf-meta">{t('profiles.syncNote')}{syncPrefixFor(active.id) ? ` → ${syncPrefixFor(active.id)}` : ''}</p>
       {err && <div class="sf-banner" role="alert">{err}</div>}
       <div class="sf-sheet__actions">
         <Button block icon="sync" disabled={busy || !/^[\w.-]+\/[\w.-]+$/.test(repo.trim()) || !(token.trim() || settings.token)} onClick={connect}>

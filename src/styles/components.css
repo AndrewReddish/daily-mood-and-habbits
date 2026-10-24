@@ -183,3 +183,9 @@ button.sf-row { cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* users */
+.sf-avatar { flex: none; border-radius: 50%; display: grid; place-items: center; background: var(--c-soft); color: var(--c-ink); font-family: var(--font-ui); font-weight: 800; line-height: 1; }
+.sf-avatarbtn { width: 44px; height: 44px; flex: none; border: 0; padding: 0; border-radius: 50%; background: transparent; display: grid; place-items: center; cursor: pointer; }
+.sf-addprofile { display: flex; gap: 8px; align-items: center; }
+.sf-addprofile .sf-input { flex: 1; min-height: 48px; padding: 12px 14px; background: var(--surface); }

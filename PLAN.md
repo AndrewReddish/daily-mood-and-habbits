@@ -11,6 +11,7 @@ This file records how the two were reconciled and what is built in which order.
 | Illustrations | 12 | 14 (10 domains + 4 states) | Follows from 10 domains. Delivered in the design bundle. |
 | Daily flow | One Today screen | **Today** (steps 1–2: mood + domains) → optional **Check-in** (steps 3–5: inner state → energy & sleep → highlight & note) | The design shows a "Крок 3 з 5" check-in screen for inner state; steps 1–2 are the Today screen. Keeps the required path to one tap + save. |
 | Saving | "Save" button | Auto-save locally ~0.4 s after any change once mood is set; "Зберегти день" flushes and shows the saved state | A phone app that "never loses data". The button stays as the ritual close. |
+| Users | Single user | **Several users per device** (one-time picker, avatar switcher, Settings → Користувачі); each with separate local data and a separate folder in the data repo | Requested by Andrew after the MVP. CHANGES.md #4. |
 | Repo layout | `spheres/` | This repo (`daily-mood-and-habbits`) is the app repo; Pages base path `/daily-mood-and-habbits/` | Repo already exists. |
 
 ## Phases (unchanged gates)
