@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&amp;family=Manrope:wght@500;600;700;800&amp;display=swap">
+<link rel="stylesheet" href="tokens.css">
+<style>
+body { margin: 0; background: #E6DED1; font-family: "Manrope", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+a { color: var(--accent-ink); } a:hover { color: var(--ink); }
+*, *::before, *::after { box-sizing: border-box; }
+</style>
+</helmet>
+<section id="1" data-screen-label="Mockups" style="padding: 64px 72px 96px; display: grid; gap: 40px;">
+  <header style="display: grid; gap: 8px; max-width: 900px; color: oklch(0.28 0.02 55);">
+    <div style="display: flex; gap: 10px; align-items: center;"><span style="font: 800 13px/1 Manrope, sans-serif; letter-spacing: .08em; text-transform: uppercase; padding: 6px 10px; border-radius: 999px; background: oklch(0.28 0.02 55); color: #F5EFE5;">1a</span><span style="font: 700 14px/1 Manrope, sans-serif; color: oklch(0.47 0.02 55);">390 × 844 · iPhone · uk-UA</span></div>
+    <h1 style="font: 500 44px/1.1 Lora, Georgia, serif; margin: 0; letter-spacing: -.01em;">Сфери · Spheres — шість екранів</h1>
+    <p style="font: 500 17px/1.5 Manrope, sans-serif; margin: 0; color: oklch(0.47 0.02 55); max-width: 720px; text-wrap: pretty;">Сьогодні, check-in, сфера, історія, тиждень і налаштування — у світлій і темній темах. 10 сфер, обраних тобою; пропозиція щодо контракту — у CHANGES.md.</p>
+  </header>
+
+  <sc-for list="{{ themes }}" as="th" hint-placeholder-count="2">
+  <div data-theme="{{ th.id }}" style="background: var(--desk); border-radius: 40px; padding: 40px; display: grid; gap: 24px; color: var(--ink); font-family: var(--font-ui);">
+    <div style="font: 700 15px/1 var(--font-ui); color: var(--ink-2); letter-spacing: .04em;">{{ th.label }}</div>
+    <div style="display: flex; flex-wrap: wrap; gap: 40px; align-items: flex-start;">
+
+      <!-- 01 TODAY -->
+      <div style="display: grid; gap: 14px;">
+        <div style="font: 700 14px/1 var(--font-ui); color: var(--ink-2);">01 · Сьогодні / Today</div>
+        <div data-screen-label="01 Today" style="width: 390px; height: 844px; border-radius: 48px; overflow: hidden; position: relative; background: var(--grain), var(--bg); box-shadow: 0 30px 60px -30px oklch(0.2 0.03 55 / .45);">
+          <div style="height: 47px; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 32px 4px; font: 700 15px/1 var(--font-ui);"><span>21:40</span><span style="display: flex; gap: 6px; align-items: center;"><span style="display: flex; gap: 2px; align-items: flex-end;"><span style="width: 3px; height: 5px; background: currentColor; border-radius: 1px;"></span><span style="width: 3px; height: 7px; background: currentColor; border-radius: 1px;"></span><span style="width: 3px; height: 9px; background: currentColor; border-radius: 1px;"></span><span style="width: 3px; height: 11px; background: currentColor; border-radius: 1px;"></span></span><span style="width: 25px; height: 12px; border: 1.5px solid currentColor; border-radius: 4px; padding: 1.5px; display: flex;"><span style="width: 70%; background: currentColor; border-radius: 1.5px;"></span></span></span></div>
+          <div style="padding: 14px 20px 0; display: grid; gap: 16px;">
+            <div style="display: grid; gap: 4px;">
+              <div style="font: 600 14px/1.3 var(--font-ui); color: var(--ink-2);">Субота, 24 жовтня</div>
+              <h2 style="font: 500 30px/1.15 var(--font-entry); margin: 0;">Добрий вечір</h2>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px;">
+              <sc-for list="{{ week }}" as="d" hint-placeholder-count="7">
+                <div style="{{ d.cell }}"><span style="font: 700 13px/1 var(--font-ui); color: var(--ink-2);">{{ d.wd }}</span><span style="font: 700 16px/1 var(--font-ui);">{{ d.n }}</span><span style="{{ d.dot }}"><svg width="22" height="22"><use href="{{ d.icon }}"></use></svg></span></div>
+              </sc-for>
+            </div>
+            <div style="background: var(--surface); border-radius: 20px; padding: 18px 16px 14px; box-shadow: var(--shadow-1); display: grid; gap: 4px;">
+              <h3 style="font: 500 22px/1.25 var(--font-entry); margin: 0;">Як пройшов твій день?</h3>
+              <p style="font: 600 14px/1.4 var(--font-ui); color: var(--ink-2); margin: 0;">Лише це обовʼязково. Решта — як захочеш.</p>
+              <div style="display: flex; justify-content: space-between; padding: 6px 0 0;">
+                <span style="width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; margin-top: 14px; color: var(--ink-2);"><svg width="40" height="40"><use href="assets/icons.svg#mood-1"></use></svg></span>
+                <span style="width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; margin-top: 5px; color: var(--ink-2);"><svg width="40" height="40"><use href="assets/icons.svg#mood-2"></use></svg></span>
+                <span style="width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; margin-top: 0; color: var(--ink-2);"><svg width="40" height="40"><use href="assets/icons.svg#mood-3"></use></svg></span>
+                <span style="width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; margin-top: 5px; color: var(--ink); background: var(--mood-4-soft); box-shadow: inset 0 0 0 2.5px var(--mood-4);"><svg width="40" height="40"><use href="assets/icons.svg#mood-4"></use></svg></span>
+                <span style="width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; margin-top: 14px; color: var(--ink-2);"><svg width="40" height="40"><use href="assets/icons.svg#mood-5"></use></svg></span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: baseline; font: 600 13px/1.3 var(--font-ui); color: var(--ink-2);"><span>важкий день</span><span style="font: 700 15px/1 var(--font-ui); color: var(--ink);">4 · Добре</span><span>чудово</span></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: baseline;"><h3 style="font: 500 22px/1.25 var(--font-entry); margin: 0;">Сфери</h3><span style="font: 600 14px/1 var(--font-ui); color: var(--ink-2);">3 з 10 · без поспіху</span></div>
+            <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;">
+              <div style="background: var(--d-sleep-soft); border-radius: 20px; padding: 12px 14px 14px; display: grid; gap: 6px; min-height: 120px; align-content: start;">
+                <div style="display: flex; justify-content: space-between; align-items: center;"><span style="width: 36px; height: 36px; border-radius: 12px; background: var(--surface); color: var(--d-sleep-ink); display: grid; place-items: center;"><svg width="22" height="22"><use href="assets/icons.svg#d-sleep"></use></svg></span><span style="display: flex; align-items: center; color: var(--d-sleep);"><svg width="30" height="30"><use href="assets/icons.svg#bloom-4"></use></svg><span style="font: 800 15px/1 var(--font-ui); color: var(--d-sleep-ink);">4</span></span></div>
+                <div style="font: 700 16px/1.2 var(--font-ui);">Сон</div>
+                <div style="font: 400 14px/1.35 var(--font-entry);">Заснув до півночі, без телефона</div>
+              </div>
+              <div style="background: var(--d-body-soft); border-radius: 20px; padding: 12px 14px 14px; display: grid; gap: 6px; min-height: 120px; align-content: start;">
+                <div style="display: flex; justify-content: space-between; align-items: center;"><span style="width: 36px; height: 36px; border-radius: 12px; background: var(--surface); color: var(--d-body-ink); display: grid; place-items: center;"><svg width="22" height="22"><use href="assets/icons.svg#d-body"></use></svg></span><span style="display: flex; align-items: center; color: var(--d-body);"><svg width="30" height="30"><use href="assets/icons.svg#bloom-3"></use></svg><span style="font: 800 15px/1 var(--font-ui); color: var(--d-body-ink);">3</span></span></div>
+                <div style="font: 700 16px/1.2 var(--font-ui);">Тіло</div>
+                <div style="font: 400 14px/1.35 var(--font-entry);">Тренування вдома</div>
+              </div>
+              <div style="background: var(--d-mood-soft); border-radius: 20px; padding: 12px 14px 14px; display: grid; gap: 6px; min-height: 120px; align-content: start;">
+                <div style="display: flex; justify-content: space-between; align-items: center;"><span style="width: 36px; height: 36px; border-radius: 12px; background: var(--surface); color: var(--d-mood-ink); display: grid; place-items: center;"><svg width="22" height="22"><use href="assets/icons.svg#d-mood"></use></svg></span><span style="display: flex; align-items: center; color: var(--d-mood-ink);"><svg width="30" height="30"><use href="assets/icons.svg#bloom-0"></use></svg></span></div>
+                <div style="font: 700 16px/1.2 var(--font-ui);">Настрій</div>
+                <div style="font: 600 14px/1.35 var(--font-ui); color: var(--ink-2);">Торкнись, коли захочеш</div>
+              </div>
+              <div style="background: var(--d-relationships-soft); border-radius: 20px; padding: 12px 14px 14px; display: grid; gap: 6px; min-height: 120px; align-content: start;">
+                <div style="display: flex; justify-content: space-between; align-items: center;"><span style="width: 36px; height: 36px; border-radius: 12px; background: var(--surface); color: var(--d-relationships-ink); display: grid; place-items: center;"><svg width="22" height="22"><use href="assets/icons.svg#d-relationships"></use></svg></span><span style="display: flex; align-items: center; color: var(--d-relationships);"><svg width="30" height="30"><use href="assets/icons.svg#bloom-5"></use></svg><span style="font: 800 15px/1 var(--font-ui); color: var(--d-relationships-ink);">5</span></span></div>
+                <div style="font: 700 16px/1.2 var(--font-ui);">Стосунки</div>
+                <div style="font: 400 14px/1.35 var(--font-entry);">Довго говорили з мамою</div>
+              </div>
+            </div>
+          </div>
+          <div style="position: absolute; left: 0; right: 0; bottom: 83px; padding: 28px 20px 12px; background: linear-gradient(to bottom, transparent, var(--bg) 40%);">
+            <div style="height: 52px; border-radius: 999px; background: var(--accent); color: var(--on-accent); display: flex; align-items: center; justify-content: center; gap: 8px; font: 700 16px/1 var(--font-ui);"><svg width="22" height="22"><use href="assets/icons.svg#check"></use></svg>Зберегти день</div>
+          </div>
+          <nav style="position: absolute; left: 0; right: 0; bottom: 0; height: 83px; padding: 6px 8px 34px; background: var(--surface); border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));">
+            <span style="display: grid; justify-items: center; align-content: center; gap: 2px; color: var(--accent-ink); font: 700 13px/1.1 var(--font-ui);"><svg width="24" height="24"><use href="assets/icons.svg#today"></use></svg>Сьогодні</span>
+            <span style="display: grid; justify-items: center; align-content: center; gap: 2px; color: var(--ink-2); font: 600 13px/1.1 var(--font-ui);"><svg width="24" height="24"><use href="assets/icons.svg#history"></use></svg>Історія</span>
+            <span style="display: grid; justify-items: center; align-content: center; gap: 2px; color: var(--ink-2); font: 600 13px/1.1 var(--font-ui);"><svg width="24" height="24"><use href="assets/icons.svg#insights"></use></svg>Інсайти</span>
+            <span style="display: grid; justify-items: center; align-content: center; gap: 2px; color: var(--ink-2); font: 600 13px/1.1 var(--font-ui);"><svg width="24" height="24"><use href="assets/icons.svg#settings"></use></svg>Налаштування</span>
+          </nav>
+          <div style="position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 134px; height: 5px; border-radius: 3px; background: var(--ink);"></div>
+        </div>
+      </div>
+
+      <!-- 02 CHECK-IN -->
+      <div style="display: grid; gap: 14px;">
+        <div style="font: 700 14px/1 var(--font-ui); color: var(--ink-2);">02 · Check-in · внутрішній стан</div>
+        <div data-screen-label="02 Check-in" style="width: 390px; height: 844px; border-radius: 48px; overflow: hidden; position: relative; background: var(--grain), var(--bg); box-shadow: 0 30px 60px -30px oklch(0.2 0.03 55 / .45);">
+          <div style="height: 47px; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 32px 4px; font: 700 15px/1 var(--font-ui);"><span>21:41</span><span style="width: 25px; height: 12px; border: 1.5px solid currentColor; border-radius: 4px; padding: 1.5px; display: flex;"><span style="width: 70%; background: currentColor; border-radius: 1.5px;"></span></span></div>
+          <div style="padding: 6px 12px 0; display: flex; align-items: center; gap: 4px;">
+            <span style="width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;"><svg width="24" height="24"><use href="assets/icons.svg#chevron-left"></use></svg></span>
+            <div style="flex: 1; display: grid; gap: 6px; padding: 0 6px;">
+              <div style="font: 700 13px/1 var(--font-ui); color: var(--ink-2); text-align: center;">Крок 3 з 5</div>
+              <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px;"><span style="height: 5px; border-radius: 3px; background: var(--accent);"></span><span style="height: 5px; border-radius: 3px; background: var(--accent);"></span><span style="height: 5px; border-radius: 3px; background: var(--accent);"></span><span style="height: 5px; border-radius: 3px; background: var(--line);"></span><span style="height: 5px; border-radius: 3px; background: var(--line);"></span></div>
+            </div>
+            <span style="min-width: 44px; height: 44px; padding: 0 10px; display: grid; place-items: center; font: 700 15px/1 var(--font-ui); color: var(--accent-ink);">Пропустити</span>
+          </div>
+          <div style="padding: 10px 20px 0; display: grid; gap: 10px;">
+            <div style="display: grid; gap: 4px;">
+              <h2 style="font: 500 28px/1.15 var(--font-entry); margin: 0; text-wrap: balance;">Як було всередині?</h2>
+              <p style="font: 600 14px/1.35 var(--font-ui); color: var(--ink-2); margin: 0;">Будь-який можна залишити порожнім.</p>
+            </div>
+            <div style="background: var(--surface); border-radius: 20px; padding: 14px 16px; box-shadow: var(--shadow-1); display: grid; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline;"><span style="font: 700 16px/1.2 var(--font-ui);">Тривога</span><span style="font: 800 22px/1 var(--font-ui);">6</span></div>
+              <p style="font: 400 15px/1.4 var(--font-entry); margin: 0; color: var(--ink-2);">Наскільки тривожно було сьогодні?</p>
+              <div style="position: relative; height: 40px; display: flex; align-items: center;"><div style="position: absolute; left: 0; right: 0; height: 10px; border-radius: 5px; background: var(--bg-sunk);"></div><div style="position: absolute; left: 0; width: 60%; height: 10px; border-radius: 5px; background: var(--d-mood);"></div><div style="position: absolute; left: calc(60% - 16px); width: 32px; height: 32px; border-radius: 50%; background: var(--surface); box-shadow: 0 0 0 3px var(--d-mood), 0 4px 10px -2px oklch(0.2 0.03 55 / .3);"></div></div>
+              <div style="display: flex; justify-content: space-between; font: 600 13px/1.2 var(--font-ui); color: var(--ink-2);"><span>0 · зовсім ні</span><span>дуже сильно · 10</span></div>
+            </div>
+            <div style="background: var(--surface); border-radius: 20px; padding: 14px 16px; box-shadow: var(--shadow-1); display: grid; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline;"><span style="font: 700 16px/1.2 var(--font-ui);">Контроль</span><span style="font: 800 22px/1 var(--font-ui);">4</span></div>
+              <p style="font: 400 15px/1.4 var(--font-entry); margin: 0; color: var(--ink-2);">Наскільки ти відчував, що впливаєш на свій день?</p>
+              <div style="position: relative; height: 40px; display: flex; align-items: center;"><div style="position: absolute; left: 0; right: 0; height: 10px; border-radius: 5px; background: var(--bg-sunk);"></div><div style="position: absolute; left: 0; width: 40%; height: 10px; border-radius: 5px; background: var(--accent);"></div><div style="position: absolute; left: calc(40% - 16px); width: 32px; height: 32px; border-radius: 50%; background: var(--surface); box-shadow: 0 0 0 3px var(--accent), 0 4px 10px -2px oklch(0.2 0.03 55 / .3);"></div></div>
+              <div style="display: flex; justify-content: space-between; font: 600 13px/1.2 var(--font-ui); color: var(--ink-2);"><span>0 · зовсім ні</span><span>дуже сильно · 10</span></div>
+            </div>
+            <div style="background: var(--surface); border-radius: 20px; padding: 14px 16px; box-shadow: var(--shadow-1); display: grid; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline;"><span style="font: 700 16px/1.2 var(--font-ui);">Простір життя</span><span style="font: 600 14px/1 var(--font-ui); color: var(--ink-2);">Ще не відмічено</span></div>
+              <p style="font: 400 15px/1.4 var(--font-entry); margin: 0; color: var(--ink-2);">Наскільки вільно ти жив сьогодні, а не через уникання?</p>
+              <div style="position: relative; height: 40px; display: flex; align-items: center;"><div style="position: absolute; left: 0; right: 0; height: 10px; border-radius: 5px; border: 2px dashed var(--line);"></div><div style="position: absolute; left: calc(50% - 16px); width: 32px; height: 32px; border-radius: 50%; background: var(--surface); border: 2px dashed var(--ink-2);"></div></div>
+              <div style="display: flex; justify-content: space-between; font: 600 13px/1.2 var(--font-ui); color: var(--ink-2);"><span>0 · зовсім ні</span><span>дуже сильно · 10</span></div>
+            </div>
+          </div>
+          <div style="position: absolute; left: 20px; right: 20px; bottom: 34px; display: grid; gap: 6px;">
+            <div style="height: 52px; border-radius: 999px; background: var(--accent); color: var(--on-accent); display: flex; align-items: center; justify-content: center; gap: 8px; font: 700 16px/1 var(--font-ui);">Далі<svg width="22" height="22"><use href="assets/icons.svg#chevron-right"></use></svg></div>
+          </div>
+          <div style="position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 134px; height: 5px; border-radius: 3px; background: var(--ink);"></div>
+        </div>
+      </div>
+
+      <!-- 03 DOMAIN SHEET -->
+      <div style="display: grid; gap: 14px;">
+        <div style="font: 700 14px/1 var(--font-ui); color: var(--ink-2);">03 · Сфера / Domain sheet</div>
+        <div data-screen-label="03 Domain detail" style="width: 390px; height: 844px; border-radius: 48px; overflow: hidden; position: relative; background: var(--grain), var(--bg); box-shadow: 0 30px 60px -30px oklch(0.2 0.03 55 / .45);">
+          <div style="height: 47px; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 32px 4px; font: 700 15px/1 var(--font-ui);"><span>21:42</span><span style="width: 25px; height: 12px; border: 1.5px solid currentColor; border-radius: 4px; padding: 1.5px; display: flex;"><span style="width: 70%; background: currentColor; border-radius: 1.5px;"></span></span></div>
+          <div style="padding: 14px 20px; display: grid; gap: 4px;"><div style="font: 600 14px/1.3 var(--font-ui); color: var(--ink-2);">Субота, 24 жовтня</div><h2 style="font: 500 30px/1.15 var(--font-entry); margin: 0;">Добрий вечір</h2></div>
+          <div style="position: absolute; inset: 0; background: var(--scrim);"></div>
+          <div style="position: absolute; left: 0; right: 0; bottom: 0; top: 78px; background: var(--surface); border-radius: 28px 28px 0 0; box-shadow: var(--shadow-2); padding: 8px 20px 34px; display: grid; gap: 14px; align-content: start;">
+            <div style="width: 40px; height: 5px; border-radius: 3px; background: var(--line); justify-self: center;"></div>
+            <div style="background: var(--d-relationships-soft); border-radius: 20px; height: 150px; display: grid; place-items: center; overflow: hidden;"><img src="assets/illustrations/relationships.svg" alt="" width="200" height="150"></div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="width: 40px; height: 40px; border-radius: 12px; background: var(--d-relationships-soft); color: var(--d-relationships-ink); display: grid; place-items: center;"><svg width="22" height="22"><use href="assets/icons.svg#d-relationships"></use></svg></span>
+              <div style="flex: 1; display: grid; gap: 2px;"><h3 style="font: 500 22px/1.2 var(--font-entry); margin: 0;">Стосунки</h3><span style="font: 600 14px/1.3 var(--font-ui); color: var(--ink-2);">Який момент близькості був сьогодні?</span></div>
+              <span style="width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--bg-sunk);"><svg width="22" height="22"><use href="assets/icons.svg#close"></use></svg></span>
+            </div>
+            <div style="display: grid; gap: 8px;">
+              <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px;">
+                <span style="height: 72px; border-radius: 16px; display: grid; justify-items: center; align-content: center; gap: 2px; color: var(--d-relationships); background: var(--bg);"><svg width="36" height="36"><use href="assets/icons.svg#bloom-1"></use></svg><span style="font: 800 14px/1 var(--font-ui); color: var(--d-relationships-ink);">1</span></span>
+                <span style="height: 72px; border-radius: 16px; display: grid; justify-items: center; align-content: center; gap: 2px; color: var(--d-relationships); background: var(--bg);"><svg width="36" height="36"><use href="assets/icons.svg#bloom-2"></use></svg><span style="font: 800 14px/1 var(--font-ui); color: var(--d-relationships-ink);">2</span></span>
+                <span style="height: 72px; border-radius: 16px; display: grid; justify-items: center; align-content: center; gap: 2px; color: var(--d-relationships); background: var(--bg);"><svg width="36" height="36"><use href="assets/icons.svg#bloom-3"></use></svg><span style="font: 800 14px/1 var(--font-ui); color: var(--d-relationships-ink);">3</span></span>
+                <span style="height: 72px; border-radius: 16px; display: grid; justify-items: center; align-content: center; gap: 2px; color: var(--d-relationships); background: var(--d-relationships-soft); box-shadow: inset 0 0 0 2.5px var(--d-relationships);"><svg width="36" height="36"><use href="assets/icons.svg#bloom-4"></use></svg><span style="font: 800 14px/1 var(--font-ui); color: var(--d-relationships-ink);">4</span></span>
+                <span style="height: 72px; border-radius: 16px; display: grid; justify-items: center; align-content: center; gap: 2px; color: var(--ink-2); background: var(--bg);"><svg width="36" height="36"><use href="assets/icons.svg#bloom-5"></use></svg><span style="font: 800 14px/1 var(--font-ui);">5</span></span>
+              </div>
+              <div style="font: 600 14px/1.3 var(--font-ui); color: var(--ink-2); text-align: center;">4 з 5 · Розкривається — добре</div>
+            </div>
+            <div style="display: grid; gap: 6px;">
+              <span style="font: 700 16px/1.3 var(--font-ui);">Що було добре?</span>
+              <div style="min-height: 52px; border-radius: 14px; background: var(--bg); box-shadow: inset 0 0 0 2px var(--focus); padding: 14px; font: 400 16px/1.4 var(--font-entry);">Довго говорили з мамою по телефону</div>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+              <span style="min-height: 44px; padding: 0 14px; border-radius: 999px; display: flex; align-items: center; gap: 6px; background: var(--d-relationships-soft); color: var(--d-relationships-ink); font: 700 15px/1 var(--font-ui);"><svg width="18" height="18"><use href="assets/icons.svg#check"></use></svg>рідні</span>
+              <span style="min-height: 44px; padding: 0 14px; border-radius: 999px; display: flex; align-items: center; gap: 6px; background: var(--d-relationships-soft); color: var(--d-relationships-ink); font: 700 15px/1 var(--font-ui);"><svg width="18" height="18"><use href="assets/icons.svg#check"></use></svg>дзвінок</span>
+              <span style="min-height: 44px; padding: 0 14px; border-radius: 999px; display: flex; align-items: center; gap: 6px; box-shadow: inset 0 0 0 1.5px var(--line); font: 600 15px/1 var(--font-ui);">друзі</span>
+              <span style="min-height: 44px; padding: 0 14px; border-radius: 999px; display: flex; align-items: center; gap: 6px; box-shadow: inset 0 0 0 1.5px var(--line); font: 600 15px/1 var(--font-ui); color: var(--ink-2);"><svg width="18" height="18"><use href="assets/icons.svg#plus"></use></svg>Мітка</span>
+            </div>
+            <div style="display: grid; gap: 4px; padding-top: 4px;">
+              <div style="height: 52px; border-radius: 999px; background: var(--accent); color: var(--on-accent); display: flex; align-items: center; justify-content: center; font: 700 16px/1 var(--font-ui);">Готово</div>
+              <div style="height: 44px; display: flex; align-items: center; justify-content: center; font: 700 15px/1 var(--font-ui); color: var(--accent-ink);">Пропустити цю сферу</div>
+            </div>
+          </div>
+          <div style="position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 134px; height: 5px; border-radius: 3px; background: var(--ink);"></div>
+        </div>
+      </div>
+
+      <!-- 04 HISTORY -->
+      <div style="display: grid; gap: 14px;">
+        <div style="font: 700 14px/1 var(--font-ui); color: var(--ink-2);">04 · Історія / History</div>
+        <div data-screen-label="04 History" style="width: 390px; height: 844px; border-radius: 48px; overflow: hidden; position: relative; background: var(--grain), var(--bg); box-shadow: 0 30px 60px -30px oklch(0.2 0.03 55 / .45);">
+          <div style="height: 47px; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 32px 4px; font: 700 15px/1 var(--font-ui);"><span>21:45</span><span style="width: 25px; height: 12px; border: 1.5px solid currentColor; border-radius: 4px; padding: 1.5px; display: flex;"><span style="width: 70%; background: currentColor; border-radius: 1.5px;"></span></span></div>
+          <div style="padding: 14px 20px 0; display: grid; gap: 14px;">
+            <h2 style="font: 500 30px/1.15 var(--font-entry); margin: 0;">Історія</h2>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--surface);"><svg width="22" height="22"><use href="assets/icons.svg#chevron-left"></use></svg></span>
+              <span style="font: 700 17px/1 var(--font-ui);">Жовтень 2026</span>
+              <span style="width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--surface); color: var(--ink-3);"><svg width="22" height="22"><use href="assets/icons.svg#chevron-right"></use></svg></span>
+            </div>
+            <div style="background: var(--surface); border-radius: 20px; padding: 12px 10px; box-shadow: var(--shadow-1); display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px;">
+              <sc-for list="{{ wds }}" as="w" hint-placeholder-count="7"><span style="font: 700 13px/1 var(--font-ui); color: var(--ink-2); text-align: center; padding: 4px 0 6px;">{{ w }}</span></sc-for>
+              <sc-for list="{{ cal }}" as="c" hint-placeholder-count="35">
+                <span style="{{ c.cell }}"><span>{{ c.n }}</span><sc-if value="{{ c.icon }}" hint-placeholder-val="{{ false }}"><svg width="16" height="16"><use href="{{ c.icon }}"></use></svg></sc-if></span>
+              </sc-for>
+            </div>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center; font: 600 13px/1 var(--font-ui); color: var(--ink-2);">
+              <span style="display: flex; gap: 4px;"><span style="width: 22px; height: 22px; border-radius: 7px; background: var(--mood-1-soft); display: grid; place-items: center;"><svg width="16" height="16"><use href="assets/icons.svg#mood-1"></use></svg></span><span style="width: 22px; height: 22px; border-radius: 7px; background: var(--mood-3-soft); display: grid; place-items: center;"><svg width="16" height="16"><use href="assets/icons.svg#mood-3"></use></svg></span><span style="width: 22px; height: 22px; border-radius: 7px; background: var(--mood-5-soft); display: grid; place-items: center;"><svg width="16" height="16"><use href="assets/icons.svg#mood-5"></use></svg></span></span>
+              <span>настрій 1 → 5</span><span style="width: 22px; height: 22px; border-radius: 7px; border: 1.5px dashed var(--line);"></span><span>порожньо — теж нормально</span>
+            </div>
+            <div style="background: var(--surface); border-radius: 20px; padding: 16px; box-shadow: var(--shadow-1); display: grid; gap: 10px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: grid; gap: 2px;"><span style="font: 700 16px/1.2 var(--font-ui);">Четвер, 22 жовтня</span><span style="font: 600 14px/1.2 var(--font-ui); color: var(--ink-2);">4 · Добре</span></div>
+                <span style="width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--mood-4-soft);"><svg width="30" height="30"><use href="assets/icons.svg#mood-4"></use></svg></span>
+              </div>
+              <p style="font: italic 400 17px/1.4 var(--font-entry); margin: 0;">«Прогулянка в лісі з собакою»</p>
+              <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                <span style="display: flex; align-items: center; gap: 4px; padding: 4px 10px 4px 6px; border-radius: 999px; background: var(--d-nature-soft); color: var(--d-nature-ink); font: 700 13px/1 var(--font-ui);"><svg width="18" height="18"><use href="assets/icons.svg#d-nature"></use></svg>Природа 5</span>
+                <span style="display: flex; align-items: center; gap: 4px; padding: 4px 10px 4px 6px; border-radius: 999px; background: var(--d-work-soft); color: var(--d-work-ink); font: 700 13px/1 var(--font-ui);"><svg width="18" height="18"><use href="assets/icons.svg#d-work"></use></svg>Робота 3</span>
+                <span style="display: flex; align-items: center; gap: 4px; padding: 4px 10px 4px 6px; border-radius: 999px; background: var(--d-sleep-soft); color: var(--d-sleep-ink); font: 700 13px/1 var(--font-ui);"><svg width="18" height="18"><use href="assets/icons.svg#d-sleep"></use></svg>Сон 4</span>
+              </div>
+            </div>
+          </div>
+          <nav style="position: absolute; left: 0; right: 0; bottom: 0; height: 83px; padding: 6px 8px 34px; background: var(--surface); border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));">
+            <span style="display: grid; justify-items: center; align-content: center; gap: 2px; color: var(--ink-2); font: 600 13px/1.1 var(--font-ui);"><svg width="24" height="24"><use href="assets/icons.svg#today"></use></svg>Сьогодні</span>
+            <span style="display: grid; justify-items: center; align-content: center; gap: 2px; color: var(--accent-ink); font: 700 13px/1.1 var(--font-ui);"><svg width="24" height="24"><use href="assets/icons.svg#history"></use></svg>Історія</span>
+            <span style="display: grid; justify-items: center; align-content: center; gap: 2px; color: var(--ink-2); font: 600 13px/1.1 var(--font-ui);"><svg width="24" height="24"><use href="assets/icons.svg#insights"></use></svg>Інсайти</span>
+            <span style="display: grid; justify-items: center; align-content: center; gap: 2px; color: var(--ink-2); font: 600 13px/1.1 var(--font-ui);"><svg width="24" height="24"><use href="assets/icons.svg#settings"></use></svg>Налаштування</span>
+          </nav>
+          <div style="position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 134px; height: 5px; border-radius: 3px; background: var(--ink);"></div>
+        </div>
+      </div>
+
+      <!-- 05 WEEK -->
+      <div style="display: grid; gap: 14px;">
+        <div style="font: 700 14px/1 var(--font-ui); color: var(--ink-2);">05 · Тиждень / Sunday review</div>
+        <div data-screen-label="05 Week" style="width: 390px; height: 844px; border-radius: 48px; overflow: hidden; position: relative; background: var(--grain), var(--bg); box-shadow: 0 30px 60px -30px oklch(0.2 0.03 55 / .45);">
+          <div style="height: 47px; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 32px 4px; font: 700 15px/1 var(--font-ui);"><span>20:15</span><span style="width: 25px; height: 12px; border: 1.5px solid currentColor; border-radius: 4px; padding: 1.5px; display: flex;"><span style="width: 70%; background: currentColor; border-radius: 1.5px;"></span></span></div>
+          <div style="padding: 6px 12px 0; display: flex; align-items: center; gap: 4px;">
+            <span style="width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;"><svg width="24" height="24"><use href="assets/icons.svg#close"></use></svg></span>
+            <div style="flex: 1; display: grid; gap: 6px; padding: 0 6px;">
+              <div style="font: 700 13px/1 var(--font-ui); color: var(--ink-2); text-align: center;">Недільний підсумок · крок 1 з 4</div>
+              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;"><span style="height: 5px; border-radius: 3px; background: var(--accent);"></span><span style="height: 5px; border-radius: 3px; background: var(--line);"></span><span style="height: 5px; border-radius: 3px; background: var(--line);"></span><span style="height: 5px; border-radius: 3px; background: var(--line);"></span></div>
+            </div>
+            <span style="width: 44px; height: 44px;"></span>
+          </div>
+          <div style="padding: 18px 20px 0; display: grid; gap: 14px;">
+            <div style="display: grid; gap: 6px;">
+              <h2 style="font: 500 28px/1.15 var(--font-entry); margin: 0;">Ось твій тиждень</h2>
+              <p style="font: 600 15px/1.4 var(--font-ui); color: var(--ink-2); margin: 0;">19–25 жовтня. Просто подивись — нічого не треба виправляти.</p>
+            </div>
+            <div style="background: var(--surface); border-radius: 20px; padding: 14px 12px; box-shadow: var(--shadow-1); display: grid; gap: 4px;">
+              <div style="display: grid; grid-template-columns: 112px repeat(7, minmax(0, 1fr)); gap: 4px; align-items: center;">
+                <span></span>
+                <sc-for list="{{ wds }}" as="w" hint-placeholder-count="7"><span style="font: 700 13px/1 var(--font-ui); color: var(--ink-2); text-align: center;">{{ w }}</span></sc-for>
+              </div>
+              <sc-for list="{{ heat }}" as="r" hint-placeholder-count="10">
+                <div style="display: grid; grid-template-columns: 112px repeat(7, minmax(0, 1fr)); gap: 4px; align-items: center;">
+                  <span style="{{ r.label }}"><svg width="18" height="18"><use href="{{ r.icon }}"></use></svg>{{ r.name }}</span>
+                  <sc-for list="{{ r.cells }}" as="x" hint-placeholder-count="7"><span style="{{ x.style }}">{{ x.v }}</span></sc-for>
+                </div>
+              </sc-for>
+            </div>
+            <p style="font: 400 15px/1.45 var(--font-entry); margin: 0; color: var(--ink-2);">Порожні клітинки — це просто дні, коли було не до того. Пропущені дні — це нормально.</p>
+          </div>
+          <div style="position: absolute; left: 20px; right: 20px; bottom: 42px;">
+            <div style="height: 52px; border-radius: 999px; background: var(--accent); color: var(--on-accent); display: flex; align-items: center; justify-content: center; gap: 8px; font: 700 16px/1 var(--font-ui);">Далі<svg width="22" height="22"><use href="assets/icons.svg#chevron-right"></use></svg></div>
+          </div>
+          <div style="position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 134px; height: 5px; border-radius: 3px; background: var(--ink);"></div>
+        </div>
+      </div>
+
+      <!-- 06 SETTINGS -->
+      <div style="display: grid; gap: 14px;">
+        <div style="font: 700 14px/1 var(--font-ui); color: var(--ink-2);">06 · Налаштування / Settings</div>
+        <div data-screen-label="06 Settings" style="width: 390px; height: 844px; border-radius: 48px; overflow: hidden; position: relative; background: var(--grain), var(--bg); box-shadow: 0 30px 60px -30px oklch(0.2 0.03 55 / .45);">
+          <div style="height: 47px; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 32px 4px; font: 700 15px/1 var(--font-ui);"><span>21:50</span><span style="width: 25px; height: 12px; border: 1.5px solid currentColor; border-radius: 4px; padding: 1.5px; display: flex;"><span style="width: 70%; background: currentColor; border-radius: 1.5px;"></span></span></div>
+          <div style="padding: 10px 20px 0; display: grid; gap: 8px;">
+            <h2 style="font: 500 30px/1.15 var(--font-entry); margin: 0;">Налаштування</h2>
+            <div style="font: 700 13px/1 var(--font-ui); color: var(--ink-2); letter-spacing: .06em; text-transform: uppercase; padding: 6px 4px 0;">Сфери</div>
+            <div style="background: var(--surface); border-radius: 20px; box-shadow: var(--shadow-1); padding: 4px 0;">
+              <sc-for list="{{ setDomains }}" as="d" hint-placeholder-count="4">
+                <div style="min-height: 52px; display: flex; align-items: center; gap: 12px; padding: 0 12px 0 14px; border-bottom: 1px solid var(--line);">
+                  <span style="{{ d.chip }}"><svg width="20" height="20"><use href="{{ d.icon }}"></use></svg></span>
+                  <span style="flex: 1; font: 700 16px/1.2 var(--font-ui);">{{ d.name }}</span>
+                  <span style="width: 52px; height: 32px; border-radius: 999px; background: var(--accent); display: flex; align-items: center; justify-content: flex-end; padding: 3px;"><span style="width: 26px; height: 26px; border-radius: 50%; background: var(--on-accent); color: var(--accent); display: grid; place-items: center;"><svg width="16" height="16"><use href="assets/icons.svg#check"></use></svg></span></span>
+                </div>
+              </sc-for>
+              <div style="min-height: 52px; display: flex; align-items: center; gap: 12px; padding: 0 12px 0 14px;"><span style="width: 34px; height: 34px; display: grid; place-items: center; color: var(--accent-ink);"><svg width="22" height="22"><use href="assets/icons.svg#pen"></use></svg></span><span style="flex: 1; font: 700 16px/1.2 var(--font-ui); color: var(--accent-ink);">Ще 7 · змінити порядок і назви</span><svg width="20" height="20" style="color: var(--ink-2);"><use href="assets/icons.svg#chevron-right"></use></svg></div>
+            </div>
+            <div style="font: 700 13px/1 var(--font-ui); color: var(--ink-2); letter-spacing: .06em; text-transform: uppercase; padding: 6px 4px 0;">Вигляд і мова</div>
+            <div style="background: var(--surface); border-radius: 20px; box-shadow: var(--shadow-1); padding: 10px 12px; display: grid; gap: 8px;">
+              <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 3px; border-radius: 14px; background: var(--bg-sunk);">
+                <span style="min-height: 44px; border-radius: 11px; display: grid; place-items: center; font: 700 14px/1 var(--font-ui); background: var(--surface); box-shadow: var(--shadow-1);">Як у системі</span>
+                <span style="min-height: 44px; display: grid; place-items: center; font: 600 14px/1 var(--font-ui); color: var(--ink-2);">Світла</span>
+                <span style="min-height: 44px; display: grid; place-items: center; font: 600 14px/1 var(--font-ui); color: var(--ink-2);">Темна</span>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 3px; border-radius: 14px; background: var(--bg-sunk);">
+                <span style="min-height: 44px; border-radius: 11px; display: grid; place-items: center; font: 700 14px/1 var(--font-ui); background: var(--surface); box-shadow: var(--shadow-1);">Українська</span>
+                <span style="min-height: 44px; display: grid; place-items: center; font: 600 14px/1 var(--font-ui); color: var(--ink-2);">English</span>
+              </div>
+            </div>
+            <div style="font: 700 13px/1 var(--font-ui); color: var(--ink-2); letter-spacing: .06em; text-transform: uppercase; padding: 6px 4px 0;">Синхронізація і дані</div>
+            <div style="background: var(--surface); border-radius: 20px; box-shadow: var(--shadow-1); padding: 4px 0;">
+              <div style="min-height: 56px; display: flex; align-items: center; gap: 12px; padding: 0 14px; border-bottom: 1px solid var(--line);"><svg width="22" height="22"><use href="assets/icons.svg#key"></use></svg><div style="flex: 1; display: grid; gap: 2px;"><span style="font: 700 16px/1.2 var(--font-ui);">Токен GitHub</span><span style="font: 600 13px/1.2 var(--font-ui); color: var(--ink-2); display: flex; gap: 4px; align-items: center;"><svg width="14" height="14"><use href="assets/icons.svg#check"></use></svg>Синхронізовано о 21:43</span></div><span style="font: 600 14px/1 var(--font-ui); color: var(--ink-2);">•••• a3f9</span></div>
+              <div style="min-height: 52px; display: flex; align-items: center; gap: 12px; padding: 0 14px; border-bottom: 1px solid var(--line);"><svg width="22" height="22"><use href="assets/icons.svg#download"></use></svg><span style="flex: 1; font: 700 16px/1.2 var(--font-ui);">Експорт у CSV</span><svg width="20" height="20" style="color: var(--ink-2);"><use href="assets/icons.svg#chevron-right"></use></svg></div>
+              <div style="min-height: 52px; display: flex; align-items: center; gap: 12px; padding: 0 14px;"><svg width="22" height="22"><use href="assets/icons.svg#sync"></use></svg><span style="flex: 1; font: 700 16px/1.2 var(--font-ui);">Резервна копія JSON</span><svg width="20" height="20" style="color: var(--ink-2);"><use href="assets/icons.svg#chevron-right"></use></svg></div>
+            </div>
+          </div>
+          <nav style="position: absolute; left: 0; right: 0; bottom: 0; height: 83px; padding: 6px 8px 34px; background: var(--surface); border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));">
+            <span style="display: grid; justify-items: center; align-content: center; gap: 2px; color: var(--ink-2); font: 600 13px/1.1 var(--font-ui);"><svg width="24" height="24"><use href="assets/icons.svg#today"></use></svg>Сьогодні</span>
+            <span style="display: grid; justify-items: center; align-content: center; gap: 2px; color: var(--ink-2); font: 600 13px/1.1 var(--font-ui);"><svg width="24" height="24"><use href="assets/icons.svg#history"></use></svg>Історія</span>
+            <span style="display: grid; justify-items: center; align-content: center; gap: 2px; color: var(--ink-2); font: 600 13px/1.1 var(--font-ui);"><svg width="24" height="24"><use href="assets/icons.svg#insights"></use></svg>Інсайти</span>
+            <span style="display: grid; justify-items: center; align-content: center; gap: 2px; color: var(--accent-ink); font: 700 13px/1.1 var(--font-ui);"><svg width="24" height="24"><use href="assets/icons.svg#settings"></use></svg>Налаштування</span>
+          </nav>
+          <div style="position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 134px; height: 5px; border-radius: 3px; background: var(--ink);"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  </sc-for>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;show&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;both&quot;, &quot;light&quot;, &quot;dark&quot;], &quot;default&quot;: &quot;both&quot;, &quot;tsType&quot;: &quot;'both'|'light'|'dark'&quot;}}">
+class Component extends DCLogic {
+  componentDidMount() { document.documentElement.setAttribute('data-theme', 'light'); }
+  renderVals() {
+    const S = 'assets/icons.svg#';
+    const show = this.props.show ?? 'both';
+    const themes = [{ id: 'light', label: 'Світла тема · Light' }, { id: 'dark', label: 'Темна тема · Dark — вечірній режим' }]
+      .filter((t) => show === 'both' || t.id === show);
+
+    const strip = [['нд', 18, 4], ['пн', 19, 3], ['вт', 20, null], ['ср', 21, 2], ['чт', 22, 4], ['пт', 23, 5], ['сб', 24, 4]];
+    const week = strip.map(([wd, n, m], i) => {
+      const today = i === 6;
+      return {
+        wd, n,
+        icon: S + (m ? 'mood-' + m : 'bloom-0'),
+        cell: { minHeight: 76, borderRadius: 16, display: 'grid', justifyItems: 'center', alignContent: 'center', gap: 5,
+          background: today ? 'var(--surface)' : 'transparent', boxShadow: today ? 'inset 0 0 0 2px var(--accent), var(--shadow-1)' : 'none' },
+        dot: { width: 30, height: 30, borderRadius: '50%', display: 'grid', placeItems: 'center',
+          background: m ? `var(--mood-${m}-soft)` : 'transparent', color: m ? 'var(--ink)' : 'var(--ink-2)' },
+      };
+    });
+
+    const moods = { 1: 3, 2: 4, 4: 2, 5: 3, 6: 4, 7: 5, 8: 4, 9: 3, 12: 4, 13: 3, 14: 2, 15: 3, 16: 4, 17: 4, 18: 4, 19: 3, 21: 2, 22: 4, 23: 5 };
+    const cal = [];
+    for (let i = 0; i < 3; i++) cal.push({ n: '', icon: '', cell: { minHeight: 46 } });
+    for (let d = 1; d <= 31; d++) {
+      const m = moods[d]; const future = d > 24; const sel = d === 22; const today = d === 24;
+      cal.push({
+        n: d, icon: m ? S + 'mood-' + m : '',
+        cell: { minHeight: 46, borderRadius: 12, display: 'grid', justifyItems: 'center', alignContent: 'center', gap: 1,
+          font: '700 14px/1 var(--font-ui)', color: future ? 'var(--ink-3)' : 'var(--ink)',
+          background: m ? `var(--mood-${m}-soft)` : 'transparent',
+          boxShadow: sel ? 'inset 0 0 0 2.5px var(--ink)' : today ? 'inset 0 0 0 2px var(--accent)' : (!m && !future ? 'inset 0 0 0 1.5px var(--line)' : 'none') },
+      });
+    }
+
+    const names = { sleep: 'Сон', body: 'Тіло', mood: 'Настрій', relationships: 'Стосунки', work: 'Робота', growth: 'Навчання', leisure: 'Дозвілля', money: 'Гроші', home: 'Дім', nature: 'Природа' };
+    const data = {
+      sleep: [4, 3, 2, 4, 3, 5, 4], body: [3, null, 2, 4, null, 4, 3], mood: [3, 4, 2, 4, 5, 4, 3], relationships: [null, 4, 3, 4, 5, 5, 4],
+      work: [4, 3, 2, 3, 4, null, null], growth: [null, 3, null, 4, null, 3, null], leisure: [null, null, 2, 3, 4, 5, 5],
+      money: [3, null, null, 3, null, null, 4], home: [null, 3, null, null, 4, 4, null], nature: [null, null, null, 5, 4, 5, 4],
+    };
+    const heat = Object.keys(data).map((id) => ({
+      name: names[id], icon: S + 'd-' + id,
+      label: { display: 'flex', alignItems: 'center', gap: 6, font: '700 13px/1 var(--font-ui)', color: `var(--d-${id}-ink)`, whiteSpace: 'nowrap', overflow: 'hidden' },
+      cells: data[id].map((v) => ({
+        v: v ?? '',
+        style: { height: 30, borderRadius: 8, display: 'grid', placeItems: 'center', font: '800 13px/1 var(--font-ui)',
+          background: v ? `var(--d-${id}-soft)` : 'transparent',
+          color: v ? `var(--d-${id}-ink)` : 'transparent',
+          boxShadow: v ? (v >= 4 ? `inset 0 0 0 2px var(--d-${id})` : 'none') : 'inset 0 0 0 1.5px var(--line)' },
+      })),
+    }));
+
+    const setDomains = ['sleep', 'body', 'mood'].map((id) => ({
+      name: names[id], icon: S + 'd-' + id,
+      chip: { width: 34, height: 34, borderRadius: 11, display: 'grid', placeItems: 'center', background: `var(--d-${id}-soft)`, color: `var(--d-${id}-ink)` },
+    }));
+
+    return { themes, week, cal, wds: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'нд'], heat, setDomains };
+  }
+}
+</script>
+</body>
+</html>
