@@ -29,6 +29,17 @@ restarts sync. Screens are keyed by user so they remount on a switch, and `useDa
 mounted with, so a late auto-save can't land in another user's data. First launch shows a one-time picker; switching
 later happens from the avatar on Today or in Settings → Користувачі. Repo layout: CHANGES.md #4.
 
+## Motion & sound
+- **Motion** (`src/styles/motion.css`): springs on taps, a petal burst from the chosen mood face or flower, a ring
+  ripple on mood, staggered flowers when a rating is picked, sheets that spring up and slide away, screens that
+  fade up, check-in steps that slide in the direction of travel, petals falling on "day saved". Nothing loops.
+  `prefers-reduced-motion` turns all of it off (rule in `components.css`).
+- **Sound** (`src/lib/sound.ts`): synthesised with Web Audio, with no audio files. Every note is from one D-major
+  pentatonic scale, so overlapping sounds stay consonant. Mood notes rise from 1 to 5; flowers are brighter, and
+  5 adds a sparkle; slider steps tick quietly (throttled); sheets breathe; saving plays a four-note arpeggio.
+  iOS: the context is unlocked on the first tap, and the "ambient" audio session respects the silent switch and
+  doesn't stop the user's music. Toggle: Settings → Звуки (per user, on by default).
+
 ## Privacy
 - The token is a fine-grained PAT scoped to the data repo (Contents: read/write). Stored only in IndexedDB on the device, sent only to `api.github.com`, never logged, never exported.
 - No analytics, no third-party requests except Google Fonts (CSS + font files).

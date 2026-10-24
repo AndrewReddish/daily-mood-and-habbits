@@ -5,6 +5,7 @@ import { nowIso } from './lib/dates';
 import { ProfileContext, type ProfileCtx } from './lib/profile';
 import { getSettings, patchSettings, type LocalSettings } from './storage/db';
 import { initSync } from './storage/sync';
+import { setSoundEnabled, sound } from './lib/sound';
 import { hasChosen, listProfiles, newProfileId, putProfile, setActiveId, type Profile } from './storage/profiles';
 import { openActiveProfile, switchProfile } from './storage/session';
 import { Today } from './routes/Today';
@@ -32,6 +33,7 @@ export function App() {
     const s = await getSettings();
     setLangState(s.lang);
     setThemeState(s.theme);
+    setSoundEnabled(s.sound !== false);
     return s;
   }, []);
 
@@ -78,6 +80,7 @@ export function App() {
       profiles,
       switchTo: async (id) => {
         if (id === activeId) return;
+        sound('switch');
         await switchProfile(id);
         await loadSettings();
         setActiveIdState(id);

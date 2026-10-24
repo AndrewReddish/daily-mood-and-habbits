@@ -13,6 +13,7 @@ import { Button, Icon, IconButton, Segmented, Sheet, TabBar, TextField, Toggle }
 import { DomainChip, domainLabel } from '../components/domain';
 import { AddProfileForm, ProfileList } from '../components/profiles';
 import { useProfiles } from '../lib/profile';
+import { isSoundEnabled, setSoundEnabled, sound } from '../lib/sound';
 import { syncPrefixFor } from '../storage/profiles';
 
 type Theme = LocalSettings['theme'];
@@ -28,6 +29,7 @@ export function Settings({ theme, setTheme, setLang, toast }: {
   const [sheet, setSheet] = useState<'token' | 'domains' | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const { active, switchTo, rename } = useProfiles();
+  const [soundOn, setSoundOn] = useState(isSoundEnabled());
 
   useEffect(() => onSyncStatus(setStatus), []);
   useEffect(() => void getSettings().then(setSettings), [status, sheet]);
@@ -110,6 +112,18 @@ export function Settings({ theme, setTheme, setLang, toast }: {
           <Segmented<Lang> label={t('settings.language')} value={lang} onChange={setLang} options={[
             { value: 'uk', label: 'Українська' }, { value: 'en', label: 'English' },
           ]} />
+          <div class="sf-row" style="padding:4px 2px 0;min-height:48px">
+            <span class="sf-row__main">
+              <span class="sf-row__title">{t('settings.sound')}</span>
+              <span class="sf-row__sub">{t('settings.sound.hint')}</span>
+            </span>
+            <Toggle checked={soundOn} label={t('settings.sound')} onChange={(on) => {
+              setSoundEnabled(on);
+              setSoundOn(on);
+              void patchSettings({ sound: on });
+              if (on) sound('chipOn');
+            }} />
+          </div>
         </div>
 
         <h2 class="sf-section">{t('settings.syncData')}</h2>
@@ -179,10 +193,11 @@ function TokenSheet({ settings, onClose }: { settings: LocalSettings; onClose: (
 
   return (
     <Sheet onClose={onClose} labelledBy="token-title">
+      {(close) => (<>
       <div class="sf-sheet__head">
         <span class="sf-dchip sf-dchip--lg" style="background:var(--accent-soft);color:var(--accent-ink)"><Icon name="key" size={22} /></span>
         <h2 class="sf-h2" id="token-title" style="flex:1">{t('settings.token')}</h2>
-        <IconButton icon="close" label={t('common.close')} tone="sunk" size={22} onClick={onClose} />
+        <IconButton icon="close" label={t('common.close')} tone="sunk" size={22} onClick={close} />
       </div>
       <TextField id="repo" ui label={t('settings.repo')} placeholder={t('settings.repo.placeholder')} value={repo} onInput={setRepo} />
       <TextField id="token" ui label={t('settings.token')} placeholder={connected ? `•••• ${settings.token!.slice(-4)}` : t('settings.token.placeholder')} value={token} onInput={setToken} />
@@ -195,6 +210,7 @@ function TokenSheet({ settings, onClose }: { settings: LocalSettings; onClose: (
         </Button>
         {connected && <Button variant="ghost" onClick={disconnect}>{t('settings.disconnect')}</Button>}
       </div>
+      </>)}
     </Sheet>
   );
 }
@@ -221,9 +237,10 @@ function DomainsSheet({ domains, save, onClose }: { domains: DomainConfig[]; sav
 
   return (
     <Sheet onClose={onClose} labelledBy="domains-title">
+      {(close) => (<>
       <div class="sf-sheet__head">
         <h2 class="sf-h2" id="domains-title" style="flex:1">{t('settings.domains.title')}</h2>
-        <IconButton icon="close" label={t('common.close')} tone="sunk" size={22} onClick={onClose} />
+        <IconButton icon="close" label={t('common.close')} tone="sunk" size={22} onClick={close} />
       </div>
       <div class="sf-list">
         {list.map((d, i) => (
@@ -247,7 +264,8 @@ function DomainsSheet({ domains, save, onClose }: { domains: DomainConfig[]; sav
         ))}
       </div>
       <Button variant="secondary" icon="plus" onClick={add}>{t('settings.domains.add')}</Button>
-      <Button block onClick={onClose}>{t('common.done')}</Button>
+      <Button block onClick={close}>{t('common.done')}</Button>
+      </>)}
     </Sheet>
   );
 }

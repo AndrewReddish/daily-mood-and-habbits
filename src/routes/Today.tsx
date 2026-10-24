@@ -7,7 +7,8 @@ import { useConfig } from '../lib/useConfig';
 import { useOnline } from '../lib/useOnline';
 import { go } from '../lib/router';
 import { db } from '../storage/db';
-import { Button, Icon, Illustration, MoodPicker, Sheet, TabBar } from '../components/ui';
+import { Button, Icon, Illustration, MoodPicker, PetalRain, Sheet, TabBar } from '../components/ui';
+import { sound } from '../lib/sound';
 import { DateStrip, DomainCard, DomainSheet } from '../components/domain';
 import { Avatar, ProfileSheet } from '../components/profiles';
 import { useProfiles } from '../lib/profile';
@@ -59,6 +60,7 @@ export function Today({ date: dateParam }: { date?: DateKey }) {
 
   const save = async () => {
     await flush();
+    sound('saved');
     setSaved(true);
   };
 
@@ -122,13 +124,18 @@ export function Today({ date: dateParam }: { date?: DateKey }) {
       )}
       {profilesOpen && <ProfileSheet onClose={() => setProfilesOpen(false)} />}
       {saved && (
-        <Sheet onClose={() => setSaved(false)} labelledBy="saved-title">
+        <Sheet onClose={() => setSaved(false)} labelledBy="saved-title" silent>
+      {(close) => (<>
           <div class="sf-saved" role="status">
-            <Illustration name="day-saved" width={200} height={150} />
+            <div style="position:relative;display:grid;place-items:center">
+              <PetalRain />
+              <Illustration name="day-saved" width={200} height={150} />
+            </div>
             <p class="sf-h2" id="saved-title">{t('today.saved')}</p>
           </div>
-          <Button block onClick={() => setSaved(false)}>{t('common.done')}</Button>
-        </Sheet>
+          <Button block onClick={close}>{t('common.done')}</Button>
+      </>)}
+    </Sheet>
       )}
     </>
   );

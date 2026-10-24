@@ -62,12 +62,14 @@ export function ProfileSheet({ onClose }: { onClose: () => void }) {
   const { switchTo, active } = useProfiles();
   return (
     <Sheet onClose={onClose} labelledBy="profiles-title">
+      {(close) => (<>
       <div class="sf-sheet__head">
         <h2 class="sf-h2" id="profiles-title" style="flex:1">{t('profiles.switch')}</h2>
-        <IconButton icon="close" label={t('common.close')} tone="sunk" size={22} onClick={onClose} />
+        <IconButton icon="close" label={t('common.close')} tone="sunk" size={22} onClick={close} />
       </div>
-      <ProfileList picked={active.id} onPick={async (id) => { onClose(); await switchTo(id); }} />
+      <ProfileList picked={active.id} onPick={async (id) => { close(); await switchTo(id); }} />
       <AddProfileForm />
+      </>)}
     </Sheet>
   );
 }
