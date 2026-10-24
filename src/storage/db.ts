@@ -31,7 +31,19 @@ export class SpheresDB extends Dexie {
   }
 }
 
-export const db = new SpheresDB();
+/**
+ * The active profile's database. A live binding: switchDb() swaps it when the user changes.
+ * Hooks capture it at mount so a late save never lands in another user's data.
+ */
+export let db = new SpheresDB();
+
+export function switchDb(name: string): SpheresDB {
+  if (db.name !== name) {
+    db.close();
+    db = new SpheresDB(name);
+  }
+  return db;
+}
 
 export const entryPath = (month: MonthKey) => `entries/${month}.json`;
 export const reviewsPath = (year: string) => `reviews/${year}.json`;
@@ -97,6 +109,7 @@ export interface LocalSettings {
   theme: 'system' | 'light' | 'dark';
   repo?: string; // "owner/name" of the PRIVATE data repo
   token?: string; // fine-grained PAT, only ever sent to api.github.com
+  prefix?: string; // folder inside the data repo ('' for the first user, 'users/<id>/' for others)
   installHintSeen?: boolean;
   lastSyncAt?: string;
 }

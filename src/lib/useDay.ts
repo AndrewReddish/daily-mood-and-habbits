@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import type { DateKey, DayEntry } from '../model/types';
 import { SCHEMA_VERSION } from '../model/schema';
-import { getEntry, putEntry } from '../storage/db';
+import { db, getEntry, putEntry } from '../storage/db';
 import { schedulePush } from '../storage/sync';
 import { nowIso } from './dates';
 
@@ -31,15 +31,17 @@ export function useDay(date: DateKey) {
   const [loaded, setLoaded] = useState(false);
   const pending = useRef<ReturnType<typeof setTimeout>>();
   const latest = useRef<Draft>({});
+  // Pin this user's database: a save that fires after a user switch must stay with its owner.
+  const store = useRef(db).current;
 
   const reload = useCallback(async () => {
-    const e = await getEntry(date);
+    const e = await getEntry(date, store);
     setSaved(e);
     const d: Draft = e ? { ...e } : {};
     latest.current = d;
     setDraft(d);
     setLoaded(true);
-  }, [date]);
+  }, [date, store]);
 
   useEffect(() => {
     setLoaded(false);
@@ -55,7 +57,7 @@ export function useDay(date: DateKey) {
     pending.current = undefined;
     const d = clean(latest.current);
     if (d.mood === undefined) return;
-    const prev = await getEntry(date);
+    const prev = await getEntry(date, store);
     const now = nowIso();
     const entry: DayEntry = {
       ...d,
@@ -65,10 +67,10 @@ export function useDay(date: DateKey) {
       createdAt: prev?.createdAt ?? now,
       updatedAt: now,
     };
-    await putEntry(entry);
+    await putEntry(entry, store);
     setSaved(entry);
     schedulePush();
-  }, [date]);
+  }, [date, store]);
 
   const update = useCallback(
     (patch: Draft | ((d: Draft) => Draft)) => {

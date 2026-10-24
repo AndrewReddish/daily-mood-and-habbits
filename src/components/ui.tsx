@@ -47,7 +47,7 @@ export function Button({ variant = 'primary', block, icon, iconEnd, children, ..
   );
 }
 
-export const IconButton = ({ icon, label, tone, size = 24, ...rest }: { icon: string; label: string; tone?: 'surface' | 'sunk'; size?: number } & JSX.HTMLAttributes<HTMLButtonElement> & { disabled?: boolean }) => (
+export const IconButton = ({ icon, label, tone, size = 24, ...rest }: { icon: string; label: string; tone?: 'surface' | 'sunk'; size?: number } & JSX.HTMLAttributes<HTMLButtonElement> & { disabled?: boolean; type?: 'button' | 'submit' }) => (
   <button type="button" class={`sf-iconbtn sf-press${tone ? ' sf-iconbtn--' + tone : ''}`} aria-label={label} {...rest}>
     <Icon name={icon} size={size} />
   </button>

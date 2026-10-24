@@ -3,6 +3,7 @@ import type { Config, DayEntry, WeeklyReview } from '../model/types';
 import { ConfigSchema, MonthFileSchema, ReviewsFileSchema } from '../model/schema';
 import { CONFIG_PATH, SpheresDB, db as defaultDb, getConfig, putConfig } from './db';
 import { differs, mergeConfig, mergeEntries, mergeReviews } from './merge';
+import { ProfilesFileSchema, mergeProfiles, type Profile } from './profiles';
 
 /**
  * Sync with a PRIVATE GitHub repo through the Contents API.
@@ -14,6 +15,8 @@ const API = 'https://api.github.com';
 export interface SyncTarget {
   repo: string; // owner/name
   token: string;
+  /** Folder inside the repo, e.g. 'users/olena-x1/'. Empty = repo root. */
+  prefix?: string;
 }
 
 export class SyncError extends Error {
@@ -50,8 +53,12 @@ export class GitHubClient {
     private fetchImpl: Fetch = (...a) => fetch(...a),
   ) {}
 
+  private get prefix(): string {
+    return this.target.prefix ?? '';
+  }
+
   private async req(path: string, init: RequestInit = {}): Promise<Response> {
-    const res = await this.fetchImpl(`${API}/repos/${this.target.repo}/contents/${path}`, {
+    const res = await this.fetchImpl(`${API}/repos/${this.target.repo}/contents/${this.prefix}${path}`, {
       ...init,
       cache: 'no-store',
       headers: {
@@ -69,7 +76,10 @@ export class GitHubClient {
     if (res.status === 404) return [];
     if (!res.ok) throw new SyncError(`list ${dir}`, res.status);
     const items = (await res.json()) as { name: string; type: string; path: string }[];
-    return items.filter((i) => i.type === 'file' && i.name.endsWith('.json')).map((i) => i.path);
+    // Paths come back repo-absolute; return them relative to our folder.
+    return items
+      .filter((i) => i.type === 'file' && i.name.endsWith('.json'))
+      .map((i) => (i.path.startsWith(this.prefix) ? i.path.slice(this.prefix.length) : i.path));
   }
 
   async get<S extends z.ZodTypeAny>(path: string, schema: S): Promise<RemoteFile<z.infer<S>> | undefined> {
@@ -184,4 +194,31 @@ export async function pushDirty(target: SyncTarget, db = defaultDb, fetchImpl?: 
     else if (path.startsWith('reviews/')) await syncReviewsFile(gh, db, path);
     await db.dirty.delete(path);
   }
+}
+
+/**
+ * `profiles.json` at the data-repo root lists every user, so a fresh install of the
+ * first user's profile can bring the others back. Returns the merged list.
+ */
+export async function syncProfilesFile(
+  target: SyncTarget,
+  local: Profile[],
+  fetchImpl?: Fetch,
+  attempt = 0,
+): Promise<Profile[]> {
+  const gh = new GitHubClient({ ...target, prefix: '' }, fetchImpl);
+  const remote = await gh.get('profiles.json', ProfilesFileSchema);
+  const merged = mergeProfiles(local, remote?.data.profiles ?? []);
+  const key = (ps: Profile[]) => JSON.stringify([...ps].sort((a, b) => a.id.localeCompare(b.id)).map((p) => [p.id, p.updatedAt]));
+  if (!remote || key(merged) !== key(remote.data.profiles)) {
+    try {
+      await gh.put('profiles.json', { profiles: [...merged].sort((a, b) => a.createdAt.localeCompare(b.createdAt)) }, remote?.sha, 'profiles');
+    } catch (e) {
+      if (e instanceof SyncError && (e.status === 409 || e.status === 422) && attempt < 2) {
+        return syncProfilesFile(target, merged, fetchImpl, attempt + 1);
+      }
+      throw e;
+    }
+  }
+  return merged;
 }

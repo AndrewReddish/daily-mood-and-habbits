@@ -22,6 +22,13 @@ app open / back online ───────────────────
 - **Deletes**: not supported in v1 (no tombstones). Clearing a day isn't a UI action yet.
 - Pull runs on open, on `online`; push runs 3 s after the last edit and immediately when the app is hidden.
 
+## Users
+Profiles live in a device-level `spheres-meta` database (`src/storage/profiles.ts`). The active profile's database is
+`db` in `src/storage/db.ts`; `switchProfile()` (`src/storage/session.ts`) pushes pending edits, swaps the database and
+restarts sync. Screens are keyed by user so they remount on a switch, and `useDay`/`useConfig` pin the database they
+mounted with, so a late auto-save can't land in another user's data. First launch shows a one-time picker; switching
+later happens from the avatar on Today or in Settings → Користувачі. Repo layout: CHANGES.md #4.
+
 ## Privacy
 - The token is a fine-grained PAT scoped to the data repo (Contents: read/write). Stored only in IndexedDB on the device, sent only to `api.github.com`, never logged, never exported.
 - No analytics, no third-party requests except Google Fonts (CSS + font files).

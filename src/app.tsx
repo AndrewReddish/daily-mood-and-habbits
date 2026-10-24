@@ -1,14 +1,19 @@
-import { useEffect, useMemo, useState } from 'preact/hooks';
+import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
 import { I18n, makeT, type Lang } from './i18n/t';
 import { useRoute } from './lib/router';
+import { nowIso } from './lib/dates';
+import { ProfileContext, type ProfileCtx } from './lib/profile';
 import { getSettings, patchSettings, type LocalSettings } from './storage/db';
 import { initSync } from './storage/sync';
+import { hasChosen, listProfiles, newProfileId, putProfile, setActiveId, type Profile } from './storage/profiles';
+import { openActiveProfile, switchProfile } from './storage/session';
 import { Today } from './routes/Today';
 import { CheckIn } from './routes/CheckIn';
 import { History } from './routes/History';
 import { Insights } from './routes/Insights';
 import { Settings } from './routes/Settings';
 import { InstallHint } from './components/InstallHint';
+import { ProfilePicker } from './components/profiles';
 
 type Theme = LocalSettings['theme'];
 
@@ -19,16 +24,32 @@ export function App() {
   const [ready, setReady] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [toast, setToast] = useState('');
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [activeId, setActiveIdState] = useState('');
+  const [chosen, setChosen] = useState(true);
+
+  const loadSettings = useCallback(async () => {
+    const s = await getSettings();
+    setLangState(s.lang);
+    setThemeState(s.theme);
+    return s;
+  }, []);
 
   useEffect(() => {
-    void getSettings().then((s) => {
-      setLangState(s.lang);
-      setThemeState(s.theme);
+    void (async () => {
+      const id = await openActiveProfile();
+      setActiveIdState(id);
+      setProfiles(await listProfiles());
+      setChosen(await hasChosen());
+      const s = await loadSettings();
       const standalone = matchMedia('(display-mode: standalone)').matches || (navigator as { standalone?: boolean }).standalone;
       setShowHint(!standalone && !s.installHintSeen && /iPhone|iPad|iPod/.test(navigator.userAgent));
       setReady(true);
-    });
-    void initSync();
+      void initSync();
+    })();
+    const reload = () => void listProfiles().then(setProfiles);
+    window.addEventListener('spheres:profiles', reload);
+    return () => window.removeEventListener('spheres:profiles', reload);
   }, []);
 
   useEffect(() => {
@@ -49,18 +70,63 @@ export function App() {
   const setTheme = (th: Theme) => { setThemeState(th); void patchSettings({ theme: th }); };
   const ctx = useMemo(() => ({ lang, t: makeT(lang) }), [lang]);
 
-  if (!ready) return null;
+  const profileCtx = useMemo<ProfileCtx | null>(() => {
+    const active = profiles.find((p) => p.id === activeId);
+    if (!active) return null;
+    return {
+      active,
+      profiles,
+      switchTo: async (id) => {
+        if (id === activeId) return;
+        await switchProfile(id);
+        await loadSettings();
+        setActiveIdState(id);
+        location.hash = '#/today';
+      },
+      add: async (name) => {
+        const now = nowIso();
+        // Prefer a colour no other user has yet.
+        const order = ['sleep', 'nature', 'work', 'leisure', 'growth', 'mood', 'money', 'relationships', 'body', 'home'];
+        const color = order.find((c) => !profiles.some((p) => p.color === c)) ?? order[profiles.length % order.length];
+        await putProfile({ id: newProfileId(name), name, color, createdAt: now, updatedAt: now });
+        setProfiles(await listProfiles());
+      },
+      rename: async (id, name) => {
+        const p = profiles.find((x) => x.id === id);
+        if (!p || !name.trim()) return;
+        await putProfile({ ...p, name: name.trim(), updatedAt: nowIso() });
+        setProfiles(await listProfiles());
+      },
+    };
+  }, [profiles, activeId, loadSettings]);
+
+  if (!ready || !profileCtx) return null;
   return (
     <I18n.Provider value={ctx}>
-      {route.name === 'today' && <Today key={route.date ?? 'today'} date={route.date} />}
-      {route.name === 'checkin' && <CheckIn key={route.date + route.step} date={route.date} step={route.step} />}
-      {route.name === 'history' && <History />}
-      {route.name === 'insights' && <Insights />}
-      {(route.name === 'settings' || route.name === 'styleguide') && (
-        <Settings theme={theme} setTheme={setTheme} setLang={setLang} toast={setToast} />
-      )}
-      {showHint && <InstallHint onClose={() => { setShowHint(false); void patchSettings({ installHintSeen: true }); }} />}
-      {toast && <div class="toast" role="status">{toast}</div>}
+      <ProfileContext.Provider value={profileCtx}>
+        {!chosen ? (
+          <ProfilePicker
+            onDone={async (id) => {
+              await setActiveId(id);
+              if (id !== activeId) await profileCtx.switchTo(id);
+              setChosen(true);
+            }}
+          />
+        ) : (
+          // Keyed by user: every screen remounts on a switch and binds to that user's database.
+          <div key={activeId}>
+            {route.name === 'today' && <Today key={route.date ?? 'today'} date={route.date} />}
+            {route.name === 'checkin' && <CheckIn key={route.date + route.step} date={route.date} step={route.step} />}
+            {route.name === 'history' && <History />}
+            {route.name === 'insights' && <Insights />}
+            {(route.name === 'settings' || route.name === 'styleguide') && (
+              <Settings theme={theme} setTheme={setTheme} setLang={setLang} toast={setToast} />
+            )}
+          </div>
+        )}
+        {chosen && showHint && <InstallHint onClose={() => { setShowHint(false); void patchSettings({ installHintSeen: true }); }} />}
+        {toast && <div class="toast" role="status">{toast}</div>}
+      </ProfileContext.Provider>
     </I18n.Provider>
   );
 }

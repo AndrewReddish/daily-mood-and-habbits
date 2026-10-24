@@ -38,8 +38,10 @@ The repo was empty, so the first pushed branch (`claude/epic-mayer-t8vtr9`) beca
 
 ## Part 2 — Sync to a private data repo (≈ 5 minutes, once)
 
-You can skip this to try the app: without it everything is stored on the phone only.
-Before you rely on the app daily, set it up: it's your backup, and it restores entries after a reinstall.
+**How saving works:** every entry is saved on the phone automatically, about half a second after you tap.
+There is no "save setup" for that. This part adds the **backup**: a copy of everything in a private GitHub repo,
+so deleting the app, clearing Safari data or changing phones doesn't lose anything.
+You can skip it to try the app, but set it up before you rely on the app daily.
 
 ### 1. Create the private data repo
 1. Go to **https://github.com/new**.
@@ -61,6 +63,21 @@ Before you rely on the app daily, set it up: it's your backup, and it restores e
 
 The token is stored only on that device (IndexedDB) and sent only to `api.github.com`. Each new device needs the token entered once.
 
+### 4. Other users
+Set up sync **as the first user (Андрій)**. Users you add later reuse the same repo and token automatically,
+each in their own folder:
+
+```
+spheres-data/
+  profiles.json          ← the list of users
+  config.json            ← Андрій
+  entries/2026-10.json   ← Андрій
+  users/olena-k3x9a/
+    config.json
+    entries/2026-10.json
+```
+After a reinstall, connecting Андрій's sync brings the other users back too. Open each one once to pull their entries.
+
 ---
 
 ## Part 3 — Install on the iPhone
@@ -77,6 +94,8 @@ Use the app from the Home Screen icon, not from a browser tab. iOS deletes a web
 
 ## Quick checklist to try it out
 
+- [ ] First launch: **Хто веде щоденник?** Pick yourself, or add a name, then **Продовжити**.
+- [ ] The avatar (top right on Today) switches users. Each user sees only their own days.
 - [ ] Tap a mood face, then **Зберегти день**: the "day saved" flower appears.
 - [ ] Tap a domain card: rate it, write "що було добре", add a tag, then **Готово**. The card shows the flower and the text.
 - [ ] **Внутрішній стан, енергія, мить дня** opens steps 3 → 5. Fill some, skip others.

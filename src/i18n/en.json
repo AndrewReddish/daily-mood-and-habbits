@@ -163,5 +163,16 @@
   "history.noEntry": "No entry this day — and that’s okay.",
   "history.add": "Add an entry",
   "insights.soon": "Insights appear after a week of entries. For now — just log your days.",
-  "review.soon": "The Sunday review is coming later."
+  "review.soon": "The Sunday review is coming later.",
+  "profiles.title": "Who is journaling?",
+  "profiles.hint": "Everyone keeps their own entries. You can switch any time — from the icon at the top or in Settings.",
+  "profiles.section": "Users",
+  "profiles.add": "Add a user",
+  "profiles.name": "Name",
+  "profiles.namePlaceholder": "For example, Olena",
+  "profiles.switch": "Switch user",
+  "profiles.current": "Now: {name}",
+  "profiles.rename": "Rename",
+  "profiles.continue": "Continue",
+  "profiles.syncNote": "New users sync to the same repository, in their own folder."
 }
