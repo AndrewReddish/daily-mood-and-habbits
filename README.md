@@ -13,12 +13,7 @@ npm test           # Vitest unit tests
 npm run build      # typecheck + production build into dist/
 ```
 
-## Deploy (GitHub Pages)
-1. Repo **Settings → Pages → Source: GitHub Actions** (the repo must be public for free Pages).
-2. Push to `main`; `.github/workflows/deploy.yml` tests, builds and deploys.
+## Deploy & sync setup
+Step-by-step guide: **[DEPLOY.md](DEPLOY.md)** (GitHub Pages, private data repo + token, iPhone install, troubleshooting).
 
-## Set up sync (once, on the phone)
-1. Create a **private** repo for the data, e.g. `spheres-data` (an empty README is fine).
-2. Create a **fine-grained personal access token**: *Only select repositories → spheres-data*, permission **Contents: Read and write**.
-3. In the app: **Налаштування → Токен GitHub**, enter `owner/spheres-data` and the token.
-4. On iPhone, open the site in Chrome/Safari → Share → **Add to Home Screen**, and use it from the icon (iOS clears website storage after 7 idle days; Home Screen apps keep it).
+App link once deployed: https://andrewreddish.github.io/daily-mood-and-habbits/
