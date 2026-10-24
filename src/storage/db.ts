@@ -112,6 +112,7 @@ export interface LocalSettings {
   prefix?: string; // folder inside the data repo ('' for the first user, 'users/<id>/' for others)
   installHintSeen?: boolean;
   lastSyncAt?: string;
+  sound?: boolean; // interface sounds; on unless turned off
 }
 
 const DEFAULT_SETTINGS: LocalSettings = { lang: 'uk', theme: 'system' };

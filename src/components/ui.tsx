@@ -1,5 +1,6 @@
 import type { ComponentChildren, JSX } from 'preact';
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
+import { sound } from '../lib/sound';
 import { useT } from '../i18n/t';
 
 const BASE = import.meta.env.BASE_URL;
@@ -53,10 +54,24 @@ export const IconButton = ({ icon, label, tone, size = 24, ...rest }: { icon: st
   </button>
 );
 
+export const reducedMotion = () => typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/** A little burst of petals from the centre of its (position: relative) parent. Re-key to replay. */
+export function Burst({ count = 7, distance = 34 }: { count?: number; distance?: number }) {
+  return (
+    <span class="sf-burst" aria-hidden="true">
+      {Array.from({ length: count }, (_, i) => (
+        <span style={`--a:${(360 / count) * i + 12}deg;--d:${distance + (i % 2) * 8}px;--delay:${(i % 3) * 25}ms`} />
+      ))}
+    </span>
+  );
+}
+
 const LIFT = ['14px', '5px', '0px', '5px', '14px'];
 /** Mood picker — the only required field. */
 export function MoodPicker({ value, onChange }: { value?: number; onChange: (n: number) => void }) {
   const t = useT();
+  const [pulse, setPulse] = useState(0); // bumps on taps only, not when a saved day loads
   return (
     <div class="sf-mood">
       <h3 class="sf-h2">{t('today.mood.q')}</h3>
@@ -70,15 +85,16 @@ export function MoodPicker({ value, onChange }: { value?: number; onChange: (n: 
             aria-label={`${n} — ${t('mood.' + n)}`}
             class={'sf-mood__opt' + (value === n ? ' is-on' : '')}
             style={`--lift:${LIFT[i]};${moodVars(n)}`}
-            onClick={() => onChange(n)}
+            onClick={() => { sound('mood', n); setPulse((p) => p + 1); onChange(n); }}
           >
             <Icon name={'mood-' + n} size={40} />
+            {value === n && pulse > 0 && <Burst key={pulse} count={8} distance={40} />}
           </button>
         ))}
       </div>
       <div class="sf-mood__ends">
         <span aria-hidden="true">{t('score.1')}</span>
-        <span class="sf-mood__caption" aria-live="polite">{value ? `${value} · ${t('mood.' + value)}` : ''}</span>
+        <span class="sf-mood__caption sf-fadeup" key={value} aria-live="polite">{value ? `${value} · ${t('mood.' + value)}` : ''}</span>
         <span aria-hidden="true">{t('score.5')}</span>
       </div>
     </div>
@@ -92,8 +108,14 @@ export function BloomRating({ palette, value, onChange, label }: { palette: stri
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
     e.preventDefault();
     const n = Math.min(5, Math.max(1, (value ?? 0) + (e.key === 'ArrowRight' ? 1 : -1)));
-    onChange(n);
+    pick(n);
     ((e.currentTarget as HTMLElement).querySelectorAll('button')[n - 1] as HTMLButtonElement | undefined)?.focus();
+  };
+  const [pulse, setPulse] = useState(0);
+  const pick = (n?: number) => {
+    sound(n ? 'bloom' : 'clear', n);
+    setPulse((p) => p + 1);
+    onChange(n);
   };
   return (
     <div class="sf-bloom" style={domainVars(palette)}>
@@ -106,14 +128,15 @@ export function BloomRating({ palette, value, onChange, label }: { palette: stri
             tabIndex={value ? (value === n ? 0 : -1) : n === 1 ? 0 : -1}
             class={'sf-bloom__opt' + (value === n ? ' is-on' : '') + (value && n < value ? ' is-past' : '')}
             aria-label={`${n} — ${t('bloom.' + n)}, ${t('score.' + n)}`}
-            onClick={() => onChange(value === n ? undefined : n)}
+            onClick={() => pick(value === n ? undefined : n)}
           >
             <Icon name={'bloom-' + n} size={36} />
             <span class="sf-bloom__n">{n}</span>
+            {value === n && pulse > 0 && <Burst key={pulse} count={n === 5 ? 10 : 6} distance={n === 5 ? 44 : 32} />}
           </button>
         ))}
       </div>
-      <p class="sf-bloom__caption" aria-live="polite">
+      <p class="sf-bloom__caption sf-fadeup" key={value ?? 0} aria-live="polite">
         {value ? `${t('bloom.of', { n: value })} · ${t('bloom.' + value)} — ${t('score.' + value)}` : t('common.notLogged')}
       </p>
     </div>
@@ -125,12 +148,16 @@ export function Slider({ id, label, question, value, onChange, color = 'var(--ac
   id: string; label: string; question?: string; value?: number; onChange: (n: number) => void; color?: string;
 }) {
   const t = useT();
-  const set = (e: Event) => onChange(+(e.currentTarget as HTMLInputElement).value);
+  const set = (e: Event) => {
+    const v = +(e.currentTarget as HTMLInputElement).value;
+    if (v !== value) sound('tick', v);
+    onChange(v);
+  };
   return (
     <div class={'sf-slider' + (value == null ? ' is-unset' : '')} style={`--c:${color};--p:${(value ?? 0) * 10}%`}>
       <div class="sf-slider__head">
         <label class="sf-label" for={id}>{label}</label>
-        <span class="sf-slider__value" aria-hidden="true">{value ?? t('common.notLogged')}</span>
+        <span class="sf-slider__value sf-bump" key={value ?? 'unset'} aria-hidden="true">{value ?? t('common.notLogged')}</span>
       </div>
       {question && <p class="sf-slider__q" id={id + '-q'}>{question}</p>}
       <input
@@ -148,7 +175,8 @@ export function Slider({ id, label, question, value, onChange, color = 'var(--ac
 
 export function Chip({ selected, onClick, children, palette }: { selected: boolean; onClick: () => void; children: ComponentChildren; palette?: string }) {
   return (
-    <button type="button" class="sf-chip sf-press" aria-pressed={selected} onClick={onClick} style={palette ? domainVars(palette) : ''}>
+    <button type="button" class="sf-chip sf-press" aria-pressed={selected} style={palette ? domainVars(palette) : ''}
+      onClick={() => { sound(selected ? 'chipOff' : 'chipOn'); onClick(); }}>
       {selected && <Icon name="check" size={18} />}
       {children}
     </button>
@@ -162,7 +190,10 @@ export function AddChip({ onAdd }: { onAdd: (tag: string) => void }) {
   const [v, setV] = useState('');
   const commit = () => {
     const tag = v.trim();
-    if (tag) onAdd(tag);
+    if (tag) {
+      sound('chipOn');
+      onAdd(tag);
+    }
     setV('');
     setEditing(false);
   };
@@ -201,7 +232,7 @@ export function TextField({ id, label, value = '', placeholder, multiline, onInp
 }
 
 export const Toggle = ({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label: string }) => (
-  <button type="button" role="switch" class="sf-switch" aria-checked={checked} aria-label={label} onClick={() => onChange(!checked)}>
+  <button type="button" role="switch" class="sf-switch" aria-checked={checked} aria-label={label} onClick={() => { sound('toggle'); onChange(!checked); }}>
     <span>{checked && <Icon name="check" size={16} />}</span>
   </button>
 );
@@ -212,7 +243,7 @@ export function Segmented<V extends string>({ options, value, onChange, label }:
   return (
     <div class="sf-seg" role="radiogroup" aria-label={label}>
       {options.map((o) => (
-        <button type="button" role="radio" aria-checked={o.value === value} onClick={() => onChange(o.value)}>{o.label}</button>
+        <button type="button" role="radio" aria-checked={o.value === value} onClick={() => { if (o.value !== value) sound('toggle'); onChange(o.value); }}>{o.label}</button>
       ))}
     </div>
   );
@@ -223,7 +254,7 @@ export function TabBar({ active }: { active: string }) {
   return (
     <nav class="sf-tabs" aria-label={t('app.name')}>
       {['today', 'history', 'insights', 'settings'].map((id) => (
-        <a class="sf-tab sf-press" href={'#/' + id} aria-current={active === id ? 'page' : undefined}>
+        <a class="sf-tab sf-press" href={'#/' + id} aria-current={active === id ? 'page' : undefined} onClick={() => active !== id && sound('tick', 4)}>
           <Icon name={id} />
           <span>{t('tab.' + id)}</span>
         </a>
@@ -232,16 +263,33 @@ export function TabBar({ active }: { active: string }) {
   );
 }
 
-export function Sheet({ onClose, labelledBy, style, children }: { onClose: () => void; labelledBy: string; style?: string; children: ComponentChildren }) {
+type SheetChildren = ComponentChildren | ((close: () => void) => ComponentChildren);
+
+/**
+ * Bottom sheet that springs up and slides away. Pass children as a function to get an
+ * animated `close` for buttons inside; `onClose` runs once the exit animation ends.
+ */
+export function Sheet({ onClose, labelledBy, style, silent, children }: {
+  onClose: () => void; labelledBy: string; style?: string; silent?: boolean; children: SheetChildren;
+}) {
+  const [closing, setClosing] = useState(false);
+  useEffect(() => { if (!silent) sound('sheetOpen'); }, []);
+  const close = () => {
+    if (closing) return;
+    if (!silent) sound('sheetClose');
+    if (reducedMotion()) return onClose();
+    setClosing(true);
+    setTimeout(onClose, 240);
+  };
   return (
     <>
-      <div class="sf-sheet-scrim" onClick={onClose} />
+      <div class={'sf-sheet-scrim' + (closing ? ' is-closing' : '')} onClick={close} />
       <section
-        class="sf-sheet" role="dialog" aria-modal="true" aria-labelledby={labelledBy} style={style}
-        onKeyDown={(e) => e.key === 'Escape' && onClose()}
+        class={'sf-sheet' + (closing ? ' is-closing' : '')} role="dialog" aria-modal="true" aria-labelledby={labelledBy} style={style}
+        onKeyDown={(e) => e.key === 'Escape' && close()}
       >
         <div class="sf-sheet__handle" />
-        {children}
+        {typeof children === 'function' ? children(close) : children}
       </section>
     </>
   );
@@ -257,10 +305,24 @@ export function StepHeader({ step, total, label, onBack, backIcon = 'chevron-lef
       <div class="sf-stephead__mid">
         <div class="sf-stephead__label">{label}</div>
         <div class="sf-stephead__bars" aria-hidden="true">
-          {Array.from({ length: total }, (_, i) => <span class={i < step ? 'is-done' : ''} />)}
+          {Array.from({ length: total }, (_, i) => <span class={i < step ? (i === step - 1 ? 'is-done is-new' : 'is-done') : ''} />)}
         </div>
       </div>
       {onSkip ? <button type="button" class="sf-stephead__skip" onClick={onSkip}>{t('common.skip')}</button> : <span style="width:44px;height:44px" />}
     </div>
+  );
+}
+
+/** Petals drifting down over the "day saved" illustration. Deterministic, so no layout jitter. */
+export function PetalRain({ count = 14 }: { count?: number }) {
+  const palettes = ['home', 'leisure', 'relationships', 'nature', 'mood', 'sleep'];
+  return (
+    <span class="sf-rain" aria-hidden="true">
+      {Array.from({ length: count }, (_, i) => (
+        <span
+          style={`--x:${(i * 37) % 100}%;--delay:${(i * 90) % 700}ms;--dur:${1500 + ((i * 53) % 700)}ms;--rot:${(i * 47) % 360}deg;--drift:${((i % 5) - 2) * 14}px;background:var(--d-${palettes[i % palettes.length]})`}
+        />
+      ))}
+    </span>
   );
 }

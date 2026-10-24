@@ -3,6 +3,10 @@ import type { DateKey } from '../model/types';
 import { useT } from '../i18n/t';
 import { useDay } from '../lib/useDay';
 import { go } from '../lib/router';
+import { sound } from '../lib/sound';
+
+// Direction of the last step change, so the next screen slides in from the right side.
+let direction: 'fwd' | 'back' = 'fwd';
 import { BloomRating, Button, Slider, StepHeader, TextField } from '../components/ui';
 
 const TOTAL = 5; // steps 1–2 (mood, domains) live on the Today screen
@@ -15,10 +19,13 @@ export function CheckIn({ date, step }: { date: DateKey; step: number }) {
   const todayPath = `day/${date}`;
 
   const next = async () => {
+    direction = 'fwd';
+    sound('step');
     await flush();
     go(step < TOTAL ? `checkin/${date}/${step + 1}` : todayPath);
   };
   const back = async () => {
+    direction = 'back';
     await flush();
     go(step > 3 ? `checkin/${date}/${step - 1}` : todayPath);
   };
@@ -33,7 +40,7 @@ export function CheckIn({ date, step }: { date: DateKey; step: number }) {
   return (
     <>
       <StepHeader step={step} total={TOTAL} label={t('checkin.step', { n: step, total: TOTAL })} onBack={back} onSkip={next} />
-      <main class="screen screen--flow">
+      <main class={`screen screen--flow screen--${direction}`}>
         {step === 3 && (
           <>
             <div class="screen__head">

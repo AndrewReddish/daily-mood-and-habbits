@@ -174,5 +174,7 @@
   "profiles.current": "Now: {name}",
   "profiles.rename": "Rename",
   "profiles.continue": "Continue",
-  "profiles.syncNote": "New users sync to the same repository, in their own folder."
+  "profiles.syncNote": "New users sync to the same repository, in their own folder.",
+  "settings.sound": "Sounds",
+  "settings.sound.hint": "Soft sounds on taps. The iPhone silent switch mutes them."
 }

@@ -50,7 +50,7 @@ export function History() {
               <span>{monthLabel}</span>
               <IconButton icon="chevron-right" size={22} tone="surface" label={t('history.nextMonth')} disabled={isCurrent} onClick={() => setMonth(addMonths(month, 1))} />
             </div>
-            <MonthCalendar cells={monthGrid(month)} moods={moods} today={today} selected={selected} onSelect={setSelected} />
+            <MonthCalendar key={month} cells={monthGrid(month)} moods={moods} today={today} selected={selected} onSelect={setSelected} />
             <div class="sf-legend">
               <span style="display:flex;gap:4px">
                 {[1, 3, 5].map((m) => <span class="sf-legend__sw" style={`background:var(--mood-${m}-soft)`}><Icon name={'mood-' + m} size={16} /></span>)}

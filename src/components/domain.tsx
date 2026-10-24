@@ -3,6 +3,7 @@ import type { DomainConfig, DomainEntry, DateKey } from '../model/types';
 import { DEFAULT_TAGS, PALETTES } from '../model/defaults';
 import { useLang, useT, locale, type Lang } from '../i18n/t';
 import { fromDateKey } from '../lib/dates';
+import { sound } from '../lib/sound';
 import { AddChip, BloomRating, Button, Chip, Icon, IconButton, Illustration, Sheet, TextField, domainVars, moodVars } from './ui';
 
 export const domainLabel = (d: DomainConfig, lang: Lang) => (lang === 'en' ? d.labelEn : d.labelUk);
@@ -33,7 +34,7 @@ export function DomainCard({ domain, entry, onOpen }: { domain: DomainConfig; en
       <span class="sf-dcard__top">
         <span class="sf-dchip"><Icon name={iconOf(domain)} size={22} /></span>
         <span class={'sf-dcard__score' + (score ? '' : ' is-empty')}>
-          <Icon name={'bloom-' + (score ?? 0)} size={30} />
+          <span class="sf-pop" key={score ?? 0} style="display:grid"><Icon name={'bloom-' + (score ?? 0)} size={30} /></span>
           {score && <span>{score}</span>}
         </span>
       </span>
@@ -59,6 +60,7 @@ export function DomainSheet({ domain, entry, onChange, onClose }: {
   const name = domainLabel(domain, lang);
   return (
     <Sheet onClose={onClose} labelledBy="sheet-title" style={domainVars(p)}>
+      {(close) => (<>
       <div class="sf-sheet__art"><Illustration name={p} width={200} height={150} /></div>
       <div class="sf-sheet__head">
         <DomainChip domain={domain} size="lg" />
@@ -66,7 +68,7 @@ export function DomainSheet({ domain, entry, onChange, onClose }: {
           <h2 class="sf-h2" id="sheet-title" style="line-height:1.2">{name}</h2>
           <span class="sf-meta" style="line-height:1.3">{prompt.startsWith('prompt.') ? t('good.label') : prompt}</span>
         </div>
-        <IconButton icon="close" label={t('common.close')} tone="sunk" size={22} onClick={onClose} />
+        <IconButton icon="close" label={t('common.close')} tone="sunk" size={22} onClick={close} />
       </div>
       <BloomRating palette={p} label={name} value={e.score} onChange={(score) => set({ ...e, score })} />
       <TextField id="good" label={t('good.label')} placeholder={t('good.placeholder')} value={e.good} maxLength={500} onInput={(good) => set({ ...e, good })} />
@@ -75,9 +77,10 @@ export function DomainSheet({ domain, entry, onChange, onClose }: {
         <AddChip onAdd={(x) => !tags.includes(x) && set({ ...e, tags: [...tags, x] })} />
       </div>
       <div class="sf-sheet__actions">
-        <Button block onClick={onClose}>{t('common.done')}</Button>
-        <Button variant="ghost" onClick={() => { onChange(undefined); onClose(); }}>{t('common.skipDomain')}</Button>
+        <Button block onClick={close}>{t('common.done')}</Button>
+        <Button variant="ghost" onClick={() => { onChange(undefined); close(); }}>{t('common.skipDomain')}</Button>
       </div>
+      </>)}
     </Sheet>
   );
 }
@@ -99,11 +102,11 @@ export function DateStrip({ days, selected, today, onSelect }: {
             type="button" class={'sf-day sf-press' + (d.date === selected ? ' is-on' : '')}
             aria-current={d.date === today ? 'date' : undefined} aria-pressed={d.date === selected}
             aria-label={`${full}${d.date === today ? ', ' + t('common.today') : ''}: ${d.mood ? t('mood.' + d.mood) : t('common.noEntry')}`}
-            onClick={() => onSelect(d.date)}
+            onClick={() => { sound('tick', 2); onSelect(d.date); }}
           >
             <span class="sf-day__wd">{wd}</span>
             <span class="sf-day__n">{dt.getDate()}</span>
-            <span class={'sf-day__dot' + (d.mood ? ' has-mood' : '')} style={moodVars(d.mood)}>
+            <span class={'sf-day__dot sf-pop' + (d.mood ? ' has-mood' : '')} key={d.mood ?? 0} style={moodVars(d.mood)}>
               <Icon name={d.mood ? 'mood-' + d.mood : 'bloom-0'} size={22} />
             </span>
           </button>
@@ -129,7 +132,7 @@ export function MonthCalendar({ cells, moods, today, selected, onSelect }: {
         const cls = ['sf-cal__d', k === selected ? 'is-on' : k === today ? 'is-today' : !m && !future ? 'is-gap' : ''].join(' ');
         return (
           <button
-            type="button" class={cls} disabled={future} style={moodVars(m)} onClick={() => onSelect(k)}
+            type="button" class={cls} disabled={future} style={moodVars(m)} onClick={() => { sound('tick', 3); onSelect(k); }}
             aria-pressed={k === selected}
             aria-label={new Intl.DateTimeFormat(loc, { day: 'numeric', month: 'long' }).format(fromDateKey(k)) + (m ? `: ${m}` : '')}
           >
