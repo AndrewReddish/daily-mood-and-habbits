@@ -19,7 +19,7 @@ export const ProfilesFileSchema = z.object({ profiles: z.array(ProfileSchema) })
 export const DEFAULT_PROFILE_ID = 'me';
 export const DEFAULT_PROFILE: Profile = {
   id: DEFAULT_PROFILE_ID,
-  name: 'Андрій',
+  name: 'Я', // placeholder; the first-run screen asks for the real name
   color: 'home',
   createdAt: '1970-01-01T00:00:00.000Z',
   updatedAt: '1970-01-01T00:00:00.000Z',

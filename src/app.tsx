@@ -6,7 +6,7 @@ import { ProfileContext, type ProfileCtx } from './lib/profile';
 import { getSettings, patchSettings, type LocalSettings } from './storage/db';
 import { initSync } from './storage/sync';
 import { setSoundEnabled, sound } from './lib/sound';
-import { hasChosen, listProfiles, newProfileId, putProfile, setActiveId, type Profile } from './storage/profiles';
+import { DEFAULT_PROFILE_ID, hasChosen, listProfiles, newProfileId, putProfile, setActiveId, type Profile } from './storage/profiles';
 import { openActiveProfile, switchProfile } from './storage/session';
 import { Today } from './routes/Today';
 import { CheckIn } from './routes/CheckIn';
@@ -14,7 +14,7 @@ import { History } from './routes/History';
 import { Insights } from './routes/Insights';
 import { Settings } from './routes/Settings';
 import { InstallHint } from './components/InstallHint';
-import { ProfilePicker } from './components/profiles';
+import { FirstRun } from './components/profiles';
 
 type Theme = LocalSettings['theme'];
 
@@ -108,10 +108,12 @@ export function App() {
     <I18n.Provider value={ctx}>
       <ProfileContext.Provider value={profileCtx}>
         {!chosen ? (
-          <ProfilePicker
-            onDone={async (id) => {
-              await setActiveId(id);
-              if (id !== activeId) await profileCtx.switchTo(id);
+          <FirstRun
+            onDone={async (name) => {
+              // The first person on this device becomes the first user (keeps the repo root for sync).
+              await profileCtx.rename(DEFAULT_PROFILE_ID, name);
+              await setActiveId(DEFAULT_PROFILE_ID);
+              if (activeId !== DEFAULT_PROFILE_ID) await profileCtx.switchTo(DEFAULT_PROFILE_ID);
               setChosen(true);
             }}
           />

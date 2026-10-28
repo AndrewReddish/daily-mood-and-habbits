@@ -97,3 +97,10 @@
 /* Avatar button. */
 .sf-avatarbtn .sf-avatar { transition: transform var(--dur-2) var(--spring); }
 .sf-avatarbtn:active .sf-avatar { transform: scale(0.9); }
+
+/* Insights: lines draw in, charts and cards arrive in order. */
+.sf-chart, .sf-insight { animation: sf-enter var(--dur-3) var(--ease) backwards; }
+.sf-trend__line { stroke-dasharray: 4000; animation: sf-draw 1100ms var(--ease) backwards; }
+@keyframes sf-draw { from { stroke-dashoffset: 4000; } to { stroke-dashoffset: 0; } }
+.sf-radar__now { transform-origin: center; transform-box: fill-box; animation: sf-grow var(--dur-3) var(--spring) backwards; }
+.sf-tags__bar span { transform-origin: left; animation: sf-fill var(--dur-3) var(--ease) backwards; }

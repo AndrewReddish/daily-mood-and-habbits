@@ -23,7 +23,8 @@ This file records how the two were reconciled and what is built in which order.
 - **Phase 1 · Foundations** ✅ repo skeleton, Pages deploy workflow, Dexie store, i18n, tokens, components.
 - **Phase 2 · Today = MVP** ✅ (first cut) logging flow, domain sheet, check-in, GitHub sync, CSV/JSON export + restore, history calendar, settings.
   ⛳ Gate: 7 days of real use on the iPhone.
-- **Phase 3 · Insights** — charts + insight cards from the analytics spec, empty/low-data states. Insights tab is a placeholder until then.
+- **Phase 3 · Insights** ✅ charts + insight cards from the analytics spec, empty/low-data states (`src/analytics/`, `src/routes/Insights.tsx`).
+  Charts are hand-drawn SVG in the design tokens instead of ECharts: no extra ~300 KB download, and they match the cards.
 - **Phase 4 · Ritual & polish** — Sunday review (designed: screen 05), therapist summary, `/styleguide` route, a11y + reduced-motion pass.
 
 ## MVP definition of done — status
@@ -33,7 +34,7 @@ This file records how the two were reconciled and what is built in which order.
 - [x] Reinstall restores every entry from the data repo (unit-tested against a fake Contents API)
 - [x] UA/EN switch without reload; all strings in `src/i18n/*.json`
 - [ ] Installs to Home Screen, opens standalone; deploys to Pages on push to `main` — *needs Pages enabled + a real-device check*
-- [ ] Charts render with 0/3/30/365 days — Phase 3
+- [x] Insight rules run on 0/3/30/365 days of data (unit-tested); charts checked in the browser with 0, 3 and 60 days
 
 ## Open decisions for Andrew
 
@@ -41,4 +42,4 @@ This file records how the two were reconciled and what is built in which order.
 2. CHANGES.md #2: the «Сон»/«Настрій» domain cards overlap the top-level `sleep`/`mood` fields. Built as independent for now (matches the mockup, where the Настрій card is empty while mood = 4).
 3. Final app name (working title «Сфери · Spheres»).
 4. Encrypt the data repo (v1.1 toggle) or keep readable JSON — readable for now.
-5. Verify the Lifeline Ukraine number (7333) before the care card ships in Phase 3.
+5. Lifeline Ukraine 7333 checked on 28 Oct 2026 (free, 24/7); 112 added for emergencies. Re-check now and then: the line has asked publicly for funding.
