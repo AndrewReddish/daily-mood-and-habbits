@@ -36,6 +36,7 @@ type BtnProps = Omit<JSX.HTMLAttributes<HTMLButtonElement>, 'icon'> & {
   icon?: string;
   iconEnd?: string;
   disabled?: boolean;
+  type?: 'button' | 'submit';
   children?: ComponentChildren;
 };
 export function Button({ variant = 'primary', block, icon, iconEnd, children, ...rest }: BtnProps) {

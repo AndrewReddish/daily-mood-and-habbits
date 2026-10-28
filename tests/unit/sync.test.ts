@@ -127,7 +127,7 @@ describe('GitHub sync', () => {
     const olena: Profile = { id: 'olena-1', name: 'Олена', color: 'nature', createdAt: '2026-10-24T10:00:00Z', updatedAt: '2026-10-24T10:00:00Z' };
     await syncProfilesFile(target, [DEFAULT_PROFILE, olena], gh.fetchImpl);
     const fresh = await syncProfilesFile(target, [DEFAULT_PROFILE], gh.fetchImpl);
-    expect(fresh.map((p) => p.name).sort()).toEqual(['Андрій', 'Олена']);
+    expect(fresh.map((p) => p.name).sort()).toEqual([DEFAULT_PROFILE.name, 'Олена'].sort());
   });
 });
 

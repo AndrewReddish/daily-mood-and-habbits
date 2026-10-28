@@ -29,6 +29,25 @@ restarts sync. Screens are keyed by user so they remount on a switch, and `useDa
 mounted with, so a late auto-save can't land in another user's data. First launch shows a one-time picker; switching
 later happens from the avatar on Today or in Settings → Користувачі. Repo layout: CHANGES.md #4.
 
+## Insights
+- `src/analytics/metrics.ts`: gap-aware means, 7-day rolling averages, Spearman ρ with ties, per-weekday averages, tag stats.
+- `src/analytics/insights.ts`: the plan's rules, with their thresholds in `RULES`:
+  - domain↔mood link: last 28 days, ≥ 14 pairs, |ρ| ≥ 0.3
+  - inner-state links: anxiety↔life space, control↔mood
+  - hard weekday: ≥ 3 entries per weekday
+  - helpful tags: ≥ 5 uses, +0.5 mood
+  - neglected domain: no score for 7+ days, shown as a gentle nudge
+  - care card: anxiety ≥ 8 on 5 of the last 7 logged days
+  Every insight carries `n` and is worded as "пов'язано з", never as a cause.
+- `src/components/charts.tsx`: SVG/CSS charts with no chart library. They unlock as in the plan:
+  - calendar heatmap: after 1 entry
+  - domain × day: after 3 entries
+  - 7-day trends: after 7 entries
+  - tags: after 10 entries
+  - wheel of life: after 14 days since the first entry
+  - weekday heatmap: after 28 days since the first entry
+  A locked chart says how many more days are needed. Insights re-reads after every sync.
+
 ## Motion & sound
 - **Motion** (`src/styles/motion.css`): springs on taps, a petal burst from the chosen mood face or flower, a ring
   ripple on mood, staggered flowers when a rating is picked, sheets that spring up and slide away, screens that

@@ -2,7 +2,7 @@ import { useState } from 'preact/hooks';
 import { useT } from '../i18n/t';
 import { initial, useProfiles } from '../lib/profile';
 import type { Profile } from '../storage/profiles';
-import { Button, Icon, IconButton, Sheet, domainVars } from './ui';
+import { Button, Icon, IconButton, Illustration, Sheet, domainVars } from './ui';
 
 export function Avatar({ profile, size = 36 }: { profile: Profile; size?: number }) {
   return (
@@ -74,20 +74,28 @@ export function ProfileSheet({ onClose }: { onClose: () => void }) {
   );
 }
 
-/** First launch: choose (or add) who is journaling. Shown once. */
-export function ProfilePicker({ onDone }: { onDone: (id: string) => void }) {
+/** First launch: no user yet — ask for a name, then go on to the app. Shown once. */
+export function FirstRun({ onDone }: { onDone: (name: string) => void }) {
   const t = useT();
-  const { active } = useProfiles();
-  const [picked, setPicked] = useState(active.id);
+  const [name, setName] = useState('');
+  const submit = (e: Event) => {
+    e.preventDefault();
+    if (name.trim()) onDone(name.trim());
+  };
   return (
-    <main class="screen" style="padding-top:calc(48px + var(--safe-top))">
+    <main class="screen" style="padding-top:calc(40px + var(--safe-top))">
+      <div style="justify-self:center"><Illustration name="first-launch" width={240} height={180} /></div>
       <div class="screen__head">
-        <h1 class="sf-title">{t('profiles.title')}</h1>
-        <p class="sf-meta">{t('profiles.hint')}</p>
+        <h1 class="sf-title">{t('firstRun.title')}</h1>
+        <p class="sf-meta">{t('firstRun.hint')}</p>
       </div>
-      <ProfileList picked={picked} onPick={setPicked} size={40} />
-      <AddProfileForm />
-      <Button block iconEnd="chevron-right" onClick={() => onDone(picked)}>{t('profiles.continue')}</Button>
+      <form class="stack" onSubmit={submit}>
+        <label class="sf-field__label" for="first-name">{t('profiles.name')}</label>
+        <input id="first-name" class="sf-input sf-input--ui" style="background:var(--surface)" autoFocus autoComplete="given-name"
+          placeholder={t('firstRun.placeholder')} value={name} maxLength={40} enterKeyHint="go"
+          onInput={(e) => setName((e.currentTarget as HTMLInputElement).value)} />
+        <Button block iconEnd="chevron-right" type="submit" disabled={!name.trim()}>{t('profiles.continue')}</Button>
+      </form>
     </main>
   );
 }
