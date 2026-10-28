@@ -53,6 +53,11 @@ describe('insights', () => {
     expect(+link!.vars.diff).toBeGreaterThan(0);
   });
 
+  it('never links the «Настрій» domain to mood (circular)', () => {
+    const e = days(20, (i) => ({ mood: (i % 5) + 1, domains: { mood: { score: (i % 5) + 1 } } }));
+    expect(computeInsights(e, DEFAULT_DOMAINS, TODAY).some((x) => x.domain === 'mood' && x.tone === 'link')).toBe(false);
+  });
+
   it('needs 14 paired days before claiming a link', () => {
     const e = days(10, (i) => ({ mood: (i % 5) + 1, domains: { body: { score: (i % 5) + 1 } } }));
     expect(computeInsights(e, DEFAULT_DOMAINS, TODAY).some((x) => x.domain === 'body' && x.tone === 'link')).toBe(false);

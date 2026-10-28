@@ -37,7 +37,8 @@ export function computeInsights(entries: DayEntry[], domains: DomainConfig[], to
 
   // Domain–mood link: Spearman over the last 28 days, ≥14 pairs, |ρ| ≥ 0.3.
   const links: Insight[] = [];
-  for (const d of domains) {
+  // The «Настрій» domain is a rating of mood itself, so linking it to mood would be circular.
+  for (const d of domains.filter((x) => x.id !== 'mood')) {
     const scores = window.map((k) => domainScore(day(k), d.id));
     const r = spearman(scores, moods);
     if (!r || r.n < RULES.corrMinPairs || Math.abs(r.rho) < RULES.corrMinRho) continue;
